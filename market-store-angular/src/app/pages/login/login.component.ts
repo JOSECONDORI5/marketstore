@@ -541,13 +541,13 @@ export class LoginComponent implements OnInit {
 
 		// Your web app's Firebase configuration
 		  const firebaseConfig = {
-		    apiKey: 'api-key',
-	      authDomain: 'project-id.firebaseapp.com',
-	      databaseURL: 'https://project-id.firebaseio.com',
-	      projectId: 'project-id',
-	      storageBucket: 'project-id.appspot.com',
-	      messagingSenderId: 'sender-id',
-	      appID: 'app-id'
+		    apiKey: 'AIzaSyDm45ctkDQJwe1L2dPv1mZBy3e7mEbFEDc',
+      authDomain: 'marketplace-21cfb.firebaseapp.com',
+      databaseURL: 'https://marketplace-21cfb-default-rtdb.firebaseio.com',
+      projectId: 'marketplace-21cfb',
+      storageBucket: 'marketplace-21cfb.appspot.com',
+      messagingSenderId: '1074328888041',
+      appId: '1:1074328888041:web:84283fbf338a75d1ac4678'
 		};
 
 		// Initialize Firebase

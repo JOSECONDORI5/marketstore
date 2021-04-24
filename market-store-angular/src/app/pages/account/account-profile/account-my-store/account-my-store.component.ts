@@ -1,23 +1,23 @@
-import { Component, OnInit, Input, OnDestroy } from '@angular/core';
-import  { NgForm } from '@angular/forms';
-import {HttpClient} from "@angular/common/http";
-
-import { Path, Server } from '../../../../config';
-import { DinamicRating, DinamicReviews, Tooltip, Rating, Sweetalert, Capitalize, CreateUrl } from '../../../../functions';
-
-import { StoresService } from '../../../../services/stores.service';
-import { ProductsService } from '../../../../services/products.service';
-import { UsersService } from '../../../../services/users.service';
-import { CategoriesService } from '../../../../services/categories.service';
-import { SubCategoriesService } from '../../../../services/sub-categories.service';
-
-import { StoresModel } from '../../../../models/stores.model';
-import { ProductsModel } from '../../../../models/products.model';
-
+import { HttpClient } from '@angular/common/http';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { NgForm } from '@angular/forms';
 import { Subject } from 'rxjs';
+import { Path, Server } from '../../../../config';
+import { Capitalize, CreateUrl, DinamicRating, DinamicReviews, Rating, Sweetalert, Tooltip } from '../../../../functions';
+import { ProductsModel } from '../../../../models/products.model';
+import { StoresModel } from '../../../../models/stores.model';
+import { CategoriesService } from '../../../../services/categories.service';
+import { ProductsService } from '../../../../services/products.service';
+import { StoresService } from '../../../../services/stores.service';
+import { SubCategoriesService } from '../../../../services/sub-categories.service';
+import { UsersService } from '../../../../services/users.service';
 
-declare var jQuery:any;
-declare var $:any;
+
+
+
+
+declare var jQuery: any;
+declare var $: any;
 
 @Component({
   selector: 'app-account-my-store',
@@ -26,22 +26,22 @@ declare var $:any;
 })
 export class AccountMyStoreComponent implements OnInit, OnDestroy {
 
-	@Input() childItem:any;
+	@Input() childItem: any;
 
-	path:string = Path.url;
-	server:string = Server.url;
-    serverDelete:string = Server.delete;
-	preload:boolean = false;
+	path: string = Path.url;
+	server: string = Server.url;
+    serverDelete: string = Server.delete;
+	preload = false;
 
 	/*=============================================
 	Variable para almacenar la data de la tienda
 	=============================================*/
-	store:any[]=[];
+	store: any[] = [];
 
 	/*=============================================
 	Variable para almacenar la data de los productos
 	=============================================*/
-	products:any[]=[];
+	products: any[] = [];
 
 	/*=============================================
 	Variables para trabajar con DataTable
@@ -52,23 +52,23 @@ export class AccountMyStoreComponent implements OnInit, OnDestroy {
 	/*=============================================
 	Variable para identificar cuando  termina la carga de los productos
 	=============================================*/
-	loadProduct:number = 0;
+	loadProduct = 0;
 
 	/*=============================================
 	Variable render de DataTable
 	=============================================*/
-	render:boolean = false;
+	render = false;
 
 	/*=============================================
 	Variables para el render de las Reseñas
 	=============================================*/
-	renderReview:boolean = false;
-	loadReview:number = 0;
+	renderReview = false;
+	loadReview = 0;
 
 	/*=============================================
 	Variable para capturar el total de calficiaciones que tiene la tienda
 	=============================================*/
-	totalReviews:any[]=[];
+	totalReviews: any[] = [];
 
 	/*=============================================
     Variable para el modelo de tienda
@@ -79,71 +79,71 @@ export class AccountMyStoreComponent implements OnInit, OnDestroy {
     Variable para el número indicativo del país
     =============================================*/
 
-    dialCode:string = null;
+    dialCode: string = null;
 
     /*=============================================
     Variable de tipo objeto para redes sociales
     =============================================*/
 
-    social:object = {
+    social: object = {
 
-        facebook:"",
-        instagram:"",
-        twitter:"",
-        linkedin:"",
-        youtube:""
+        facebook:'',
+        instagram:'',
+        twitter:'',
+        linkedin:'',
+        youtube:''
 
-    }
+    };
 
     /*=============================================
     Variable para capturar el listado de paises
     =============================================*/
 
-    countries:any = null;
+    countries: any = null;
 
     /*=============================================
     Variables para almacenar los archivos de imagen de la tienda
     =============================================*/
 
-    logoStore:File = null;
-    coverStore:File = null;
+    logoStore: File = null;
+    coverStore: File = null;
 
     /*=============================================
     Variable para capturar el ID de la tienda
     =============================================*/
 
-    idStore:string=null;
+    idStore: string = null;
 
     /*=============================================
     Variable para el modelo de tienda
     =============================================*/
-    
+
     productModel: ProductsModel;
 
     /*=============================================
-    Configuración inicial de Summernote 
+    Configuración inicial de Summernote
     =============================================*/
 
     config = {
 
-        placeholder:'',
-        tabsize:2,
-        height:'400px',
-        toolbar:[
+        placeholder: '',
+        tabsize: 2,
+        height: '400px',
+        toolbar: [
             ['misc', ['codeview', 'undo', 'redo']],
             ['style', ['bold', 'italic', 'underline', 'clear']],
             ['para', ['style', 'ul', 'ol', 'paragraph', 'height']],
-            ['insert', ['link','picture', 'hr']]
+            ['insert', ['link', 'picture', 'hr']]
         ]
 
-    }
+    };
 
     /*=============================================
     Variables de tipo arreglo para categorías y subcategorías
     =============================================*/
 
-    categories:any[] = [];
-    subcategories:any[] = [];
+    categories: any[] = [];
+    subcategories: any[] = [];
 
     /*=============================================
     Variables de tipo arreglo con objeto para el resumen del producto
@@ -151,9 +151,9 @@ export class AccountMyStoreComponent implements OnInit, OnDestroy {
 
     summaryGroup: any[] = [{
 
-        input:''
+        input: ''
 
-    }]
+    }];
 
     /*=============================================
     Variables de tipo arreglo con objetos para los detalles del producto
@@ -161,10 +161,10 @@ export class AccountMyStoreComponent implements OnInit, OnDestroy {
 
     detailsGroup: any[] = [{
 
-        title:'',
-        value:''
+        title: '',
+        value: ''
 
-    }]
+    }];
 
     /*=============================================
     Variables de tipo arreglo con objetos para las especificaciones del producto
@@ -172,16 +172,16 @@ export class AccountMyStoreComponent implements OnInit, OnDestroy {
 
     specificationsGroup: any[] = [{
 
-        type:'',
-        values:''
+        type: '',
+        values: ''
 
-    }]
+    }];
 
     /*=============================================
     Variables de tipo arreglo para las palabras claves del producto
     =============================================*/
 
-    tags:any[] = [];
+    tags: any[] = [];
 
     /*=============================================
     Variables de tipo arreglo para la galería del producto
@@ -195,37 +195,37 @@ export class AccountMyStoreComponent implements OnInit, OnDestroy {
     Variables de tipo objeto para el banner superior del producto
     =============================================*/
 
-    topBanner:object = {
+    topBanner: object = {
 
-        "H3 tag":"",
-        "P1 tag":"",
-        "H4 tag":"", 
-        "P2 tag":"", 
-        "Span tag":"",
-        "Button tag":"",
-        "IMG tag":""
-    }
+        'H3 tag':'',
+        'P1 tag':'',
+        'H4 tag':'',
+        'P2 tag':'',
+        'Span tag':'',
+        'Button tag':'',
+        'IMG tag':''
+    };
 
     /*=============================================
     Variables de tipo objeto para el slide horizontal del producto
     =============================================*/
 
-    hSlider:object = {
+    hSlider: object = {
 
-        "H4 tag":"",
-        "H3-1 tag":"",
-        "H3-2 tag":"", 
-        "H3-3 tag":"", 
-        "H3-4s tag":"",
-        "Button tag":"",
-        "IMG tag":""
-    }
+        'H4 tag':'',
+        'H3-1 tag':'',
+        'H3-2 tag':'',
+        'H3-3 tag':'',
+        'H3-4s tag':'',
+        'Button tag':'',
+        'IMG tag':''
+    };
 
     /*=============================================
     Variables de tipo arreglo para el video del producto
     =============================================*/
 
-    video:any[] = [];
+    video: any[] = [];
 
     /*=============================================
     Variables de tipo arreglo para las ofertas del producto
@@ -237,44 +237,44 @@ export class AccountMyStoreComponent implements OnInit, OnDestroy {
     Variables para almacenar los archivos de imagen del producto
     =============================================*/
 
-    imageProduct:File = null;
-    topBannerImg:File = null;
-    defaultBannerImg:File = null;
-    hSliderImg:File = null;
+    imageProduct: File = null;
+    topBannerImg: File = null;
+    defaultBannerImg: File = null;
+    hSliderImg: File = null;
     vSliderImg: File = null;
 
     /*=============================================
     Variable para capturar el ID del producto
     =============================================*/
 
-    idProducts:any[]=[];
-    idProduct:string = null;
+    idProducts: any[] = [];
+    idProduct: string = null;
 
     /*=============================================
     Variable que permite avisar al formulario que estamos editando producto
     =============================================*/
 
-    editProductAction:boolean = false;
+    editProductAction = false;
 
     /*=============================================
     Variable que muestra el mensaje antes de borrar el producto
     =============================================*/
 
-    popoverMessage:string = 'Are you sure to remove it?';
+    popoverMessage = 'Are you sure to remove it?';
 
 	/*=============================================
 	Constructor
 	=============================================*/
 
-	constructor(private storesService:StoresService,
-				private productsService:ProductsService,
-				private usersService:UsersService,
-                private categoriesService:CategoriesService,
-                private subCategoriesService:SubCategoriesService,
-				private http: HttpClient) {
+	constructor(private storesService: StoresService,
+				         private productsService: ProductsService,
+				         private usersService: UsersService,
+             private categoriesService: CategoriesService,
+             private subCategoriesService: SubCategoriesService,
+				         private http: HttpClient) {
 
 					this.storeModel = new StoresModel();
-                    this.productModel = new ProductsModel();
+     this.productModel = new ProductsModel();
 
 				}
 
@@ -286,21 +286,21 @@ export class AccountMyStoreComponent implements OnInit, OnDestroy {
 	  	Agregamos opciones a DataTable
 	  	=============================================*/
 
-	  	this.dtOptions = {
+	 this.dtOptions = {
 	  		pagingType: 'full_numbers',
 	  		processing: true
-	  	}
+	  	};
 
 		/*=============================================
       	Validamos si el usuario ya tiene una tienda habilitada
       	=============================================*/
 
-      	this.storesService.getFilterData("username", this.childItem)
-      	.subscribe(resp=>{
+  this.storesService.getFilterData('username', this.childItem)
+      	.subscribe(resp => {
 
-	        if(Object.keys(resp).length == 0){
-        
-	         	window.open("account/new-store", "_top");
+	        if (Object.keys(resp).length == 0){
+
+	         	window.open('account/new-store', '_top');
 
 	        }else{
 
@@ -308,7 +308,7 @@ export class AccountMyStoreComponent implements OnInit, OnDestroy {
       			Almacenamos la información de la tienda
       			=============================================*/
 
-      			for(const i in resp){
+      			for (const i in resp){
 
       				this.idStore = Object.keys(resp).toString();
 
@@ -318,81 +318,81 @@ export class AccountMyStoreComponent implements OnInit, OnDestroy {
 	                Almacenamos información de la tienda en el modelo
 	                =============================================*/
 
-	                this.storeModel.store = resp[i].store;
-	                this.storeModel.url = resp[i].url;
-	                this.storeModel.about = resp[i].about;
-	                this.storeModel.abstract = resp[i].abstract;
-	                this.storeModel.email = resp[i].email;
-	                this.storeModel.country = resp[i].country;
-	                this.storeModel.city = resp[i].city;
-	                this.storeModel.address = resp[i].address;
-	                this.storeModel.logo = resp[i].logo;
-	                this.storeModel.cover = resp[i].cover;
-	                this.storeModel.username = resp[i].username;
+	         this.storeModel.store = resp[i].store;
+	         this.storeModel.url = resp[i].url;
+	         this.storeModel.about = resp[i].about;
+	         this.storeModel.abstract = resp[i].abstract;
+	         this.storeModel.email = resp[i].email;
+	         this.storeModel.country = resp[i].country;
+	         this.storeModel.city = resp[i].city;
+	         this.storeModel.address = resp[i].address;
+	         this.storeModel.logo = resp[i].logo;
+	         this.storeModel.cover = resp[i].cover;
+	         this.storeModel.username = resp[i].username;
 
 	                /*=============================================
 	                Dar formato al número teléfonico
 	                =============================================*/
 
-	                if(resp[i].phone != undefined){
+	         if (resp[i].phone != undefined){
 
-	                    this.storeModel.phone = resp[i].phone.split("-")[1];
-	                    this.dialCode = resp[i].phone.split("-")[0];
+	                    this.storeModel.phone = resp[i].phone.split('-')[1];
+	                    this.dialCode = resp[i].phone.split('-')[0];
 	                }
 
 	                /*=============================================
 	                Traer listado de países
 	                =============================================*/
 
-	                this.usersService.getCountries()
-	                .subscribe(resp=>{
+	         this.usersService.getCountries()
+	                .subscribe(resp => {
 
 	                    this.countries = resp;
 
-	                })
-      			
+	                });
+
       			}
 
       			/*=============================================
   				Damos formato a las redes sociales de la tienda
   				=============================================*/
 
-  				this.store.map((item, index)=>{
+  				   this.store.map((item, index) => {
 
   					item.social = JSON.parse(item.social);
   					item.newSocial = [];
 
-  					for(const i in item.social){
+  					for (const i in item.social){
 
-  						if(item.social[i] != ""){
+  						if (item.social[i] != ''){
 
-  							item.newSocial.push(i)
+  							item.newSocial.push(i);
   						}
 
   						/*=============================================
   						Capturamos el destino final de cada red social
   						=============================================*/
 
-  						switch(i){
+  						switch (i){
 
-  							case "facebook":
-  							this.social["facebook"] = item.social[i].split("/").pop();
+  							case 'facebook':
+  							this.social['facebook'] = item.social[i].split('/').pop();
   							break;
 
-  							case "instagram":
-  							this.social["instagram"] = item.social[i].split("/").pop();
+  							case 'instagram':
+  							this.social['instagram'] = item.social[i].split('/').pop();
   							break;
 
-  							case "twitter":
-  							this.social["twitter"] = item.social[i].split("/").pop();
+  							case 'twitter':
+  							this.social['twitter'] = item.social[i].split('/').pop();
   							break;
 
-  							case "linkedin":
-  							this.social["linkedin"] = item.social[i].split("/").pop();
+  							case 'linkedin':
+  							this.social['linkedin'] = item.social[i].split('/').pop();
   							break;
 
-  							case "youtube":
-  							this.social["youtube"] = item.social[i].split("/").pop();
+  							case 'youtube':
+  							this.social['youtube'] = item.social[i].split('/').pop();
   							break;
 
   						}
@@ -401,26 +401,26 @@ export class AccountMyStoreComponent implements OnInit, OnDestroy {
 
   					return item;
 
-  				})
+  				});
 
   				/*=============================================
       			Traemos la data de productos de acuerdo al nombre de la tienda
       			=============================================*/
 
-      			this.productsService.getFilterDataStore("store", this.store[0].store)
-      			.subscribe(resp=>{
+      			this.productsService.getFilterDataStore('store', this.store[0].store)
+      			.subscribe(resp => {
 
       				/*=============================================
       				Almacenamos la información del producto
       				=============================================*/
-      				
-      				for(const i in resp){
+
+      				for (const i in resp){
 
       					this.loadProduct++;
 
       					this.products.push(resp[i]);
 
-                        this.idProducts = Object.keys(resp).toString().split(",");	
+           this.idProducts = Object.keys(resp).toString().split(',');
 
       				}
 
@@ -428,7 +428,7 @@ export class AccountMyStoreComponent implements OnInit, OnDestroy {
       				Damos formato a la data de productos
       				=============================================*/
 
-      				this.products.map((product, index)=>{
+      				this.products.map((product, index) => {
 
       					product.feedback = JSON.parse(product.feedback);
       					product.details = JSON.parse(product.details);
@@ -442,9 +442,9 @@ export class AccountMyStoreComponent implements OnInit, OnDestroy {
 	      				Damos formato a las ofertas
 	      				=============================================*/
 
-	      				if(product.offer != ''){
+	      				if (product.offer != ''){
 
-	      					product.offer = JSON.parse(product.offer);	
+	      					product.offer = JSON.parse(product.offer);
 
 	      				}else{
 
@@ -455,7 +455,7 @@ export class AccountMyStoreComponent implements OnInit, OnDestroy {
 	      				Damos formato a las especificaciones
 	      				=============================================*/
 
-	      				if(product.specification != '' && product.specification != '[{\"\":[]}]' ){
+	      				if (product.specification != '' && product.specification != '[{\"\":[]}]' ){
 
 	      					product.specification = JSON.parse(product.specification);
 
@@ -468,7 +468,7 @@ export class AccountMyStoreComponent implements OnInit, OnDestroy {
 	      				Damos formato al video
 	      				=============================================*/
 
-	      				product.video = JSON.parse(product.video);
+	      				/* product.video = JSON.parse(product.video);
 
 	      				if(product.video.length > 0){
 
@@ -483,8 +483,8 @@ export class AccountMyStoreComponent implements OnInit, OnDestroy {
       							product.video = `https://player.vimeo.com/video/${product.video[1]}`;
 
       						}
-      					
-	      				}
+
+	      				} */
 
 	      				/*=============================================
 	      				Damos formato a las reseñas
@@ -492,79 +492,79 @@ export class AccountMyStoreComponent implements OnInit, OnDestroy {
 
 	      				this.totalReviews.push(JSON.parse(product.reviews));
 
-	      				let rating = DinamicRating.fnc(product);
+	      				const rating = DinamicRating.fnc(product);
 	      				product.reviews = DinamicReviews.fnc(rating);
 
 	      				return product;
-	
 
-      				})
+
+      				});
 
       				/*=============================================
 					Pintar el render en DataTable
-					=============================================*/	
+					=============================================*/
 
-      				if(this.loadProduct == this.products.length){
+      				if (this.loadProduct == this.products.length){
 
-      					this.dtTrigger.next();	
+      					this.dtTrigger.next();
 
       				}
 
-      			})
+      			});
 
                 /*=============================================
                 Traer data de categorías
                 =============================================*/
 
-                this.categoriesService.getData()
-                .subscribe(resp=>{  
+         this.categoriesService.getData()
+                .subscribe(resp => {
 
-                    for(const i in resp){
+                    for (const i in resp){
 
                         this.categories.push(resp[i]);
                     }
-                
-                })
+
+                });
 
                 /*=============================================
                 Agregar imagen del producto por defecto
                 =============================================*/
 
-                this.productModel.image = `assets/img/products/default/default-image.jpg`;
+         this.productModel.image = `assets/img/products/default/default-image.jpg`;
 
                  /*=============================================
                 Agregar Imagen Banner Top por defecto
                 =============================================*/
 
-                this.topBanner["IMG tag"] = `assets/img/products/default/default-top-banner.jpg`;
+         this.topBanner['IMG tag'] = `assets/img/products/default/default-top-banner.jpg`;
 
                 /*=============================================
                 Agregar Imagen Banner Default por defecto
                 =============================================*/
 
-                this.productModel.default_banner = `assets/img/products/default/default-banner.jpg`;
+         this.productModel.default_banner = `assets/img/products/default/default-banner.jpg`;
 
                 /*=============================================
                 Agregar Imagen Slide Horizontal por defecto
                 =============================================*/
 
-                this.hSlider["IMG tag"] = `assets/img/products/default/default-horizontal-slider.jpg`;
+         this.hSlider['IMG tag'] = `assets/img/products/default/default-horizontal-slider.jpg`;
 
                  /*=============================================
                 Agregar Imagen Slide Vertical por defecto
                 =============================================*/
 
-                this.productModel.vertical_slider = `assets/img/products/default/default-vertical-slider.jpg`;
+         this.productModel.vertical_slider = `assets/img/products/default/default-vertical-slider.jpg`;
 
                 /*=============================================
                 Finaliza el Preload
                 =============================================*/
 
-	        	this.preload = false;
+	        this.preload = false;
 
 	        }
 
-	    })
+	    });
 	}
 
 	/*=============================================
@@ -573,7 +573,7 @@ export class AccountMyStoreComponent implements OnInit, OnDestroy {
 
 	callback(i, totalReviews){
 
-		if(!this.render){
+		if (!this.render){
 
 			this.render = true;
 
@@ -584,84 +584,84 @@ export class AccountMyStoreComponent implements OnInit, OnDestroy {
 
 				/*=============================================
             	Agregamos el tooltip para mostrar comentario de revisión
-            	=============================================*/ 
+            	=============================================*/
 
 				Tooltip.fnc();
 
 				/*=============================================
             	Aparecemos la tabla
-            	=============================================*/ 
+            	=============================================*/
 
-            	$("table").animate({"opacity":1});
+    $('table').animate({'opacity': 1});
 
-            	$(".preloadTable").animate({"opacity":0});
+    $('.preloadTable').animate({'opacity': 0});
 
             	/*=============================================
             	Agregamos las calificaciones totales de la tienda
-            	=============================================*/ 
+            	=============================================*/
 
-            	totalReviews.forEach(( review, index)=>{
+    totalReviews.forEach(( review, index) => {
 
             		globalRating += review.length;
-	            		
-	            	for(const i in review){
 
-	            		globalReviews += review[i].review
-	            		
+	            	for (const i in review){
+
+	            		globalReviews += review[i].review;
+
 	            	}
-            	})
+            	});
 
             	/*=============================================
             	Tomamos el promedio y porcentaje de calificaciones
-            	=============================================*/ 
+            	=============================================*/
 
-            	let averageReviews = Math.round(globalReviews/globalRating);
-            	let precentage = Math.round(globalReviews*100/(globalRating*5));
-            	
+    let averageReviews = Math.round(globalReviews / globalRating);
+    let precentage = Math.round(globalReviews * 100 / (globalRating * 5));
+
             	/*=============================================
             	Pintamos en el HTML el promedio y porcentaje de calificaciones
-            	=============================================*/ 
+            	=============================================*/
 
-            	$(".globalRating").html(globalRating);
-            	$(".percentage").html(precentage);
+    $('.globalRating').html(globalRating);
+    $('.percentage').html(precentage);
 
             	/*=============================================
             	Tomamos el Arreglo del promedio de calificaciones
-            	=============================================*/ 
+            	=============================================*/
 
-            	let averageRating = DinamicReviews.fnc(averageReviews);
+    let averageRating = DinamicReviews.fnc(averageReviews);
 
             	/*=============================================
             	Pintamos en el HTML el Select para el plugin Rating
-            	=============================================*/ 
+            	=============================================*/
 
-            	$(".br-theme-fontawesome-stars").html(`
+    $('.br-theme-fontawesome-stars').html(`
 
 					 <select class="ps-rating reviewsOption" data-read-only="true"></select>
 
-            	`)
+            	`);
 
             	/*=============================================
             	Recorremos el arreglo del promedio de calificaciones para pintar los options
-            	=============================================*/ 
+            	=============================================*/
 
-            	for(let i = 0; i < averageRating.length; i++){
+    for (let i = 0; i < averageRating.length; i++){
 
-            		$(".reviewsOption").append(`
+            		$('.reviewsOption').append(`
 
-						 <option value="${averageRating[i]}">${i+1}</option>
+						 <option value="${averageRating[i]}">${i + 1}</option>
 
-            		`)
+            		`);
 
             	}
 
             	/*=============================================
             	Ejecutamos la función Rating()
-            	=============================================*/ 
+            	=============================================*/
 
-            	Rating.fnc(); 
+    Rating.fnc();
 
-			},i*10)
+			}, i * 10);
 		}
 	}
 
@@ -671,17 +671,17 @@ export class AccountMyStoreComponent implements OnInit, OnDestroy {
 
 	callbackReview(){
 
-		this.loadReview++
+		this.loadReview++;
 
 
-		if(this.loadReview > this.loadProduct){
+		if (this.loadReview > this.loadProduct){
 
-			if(!this.renderReview){
+			if (!this.renderReview){
 
 				this.renderReview = true;
 
 				Rating.fnc();
-				
+
 			}
 
 		}
@@ -697,25 +697,25 @@ export class AccountMyStoreComponent implements OnInit, OnDestroy {
         Validamos la información de la tienda
         =============================================*/
 
-        if($(input).attr("name") == "storeAbout"){
+        if ($(input).attr('name') == 'storeAbout'){
 
         	/*=============================================
             Validamos expresión regular de la información de la tienda
-            =============================================*/ 
+            =============================================*/
 
-            let pattern = /^[-\\(\\)\\=\\%\\&\\$\\;\\_\\*\\"\\#\\?\\¿\\!\\¡\\:\\,\\.\\0-9a-zA-ZñÑáéíóúÁÉÍÓÚ ]{1,1000}$/;
+            const pattern = /^[-\\(\\)\\=\\%\\&\\$\\;\\_\\*\\"\\#\\?\\¿\\!\\¡\\:\\,\\.\\0-9a-zA-ZñÑáéíóúÁÉÍÓÚ ]{1,1000}$/;
 
-            if(!pattern.test(input.value)){
+            if (!pattern.test(input.value)){
 
                 $(input).parent().addClass('was-validated');
 
-                input.value = "";
+                input.value = '';
 
                 return;
 
             }else{
 
-                this.storeModel.abstract = input.value.substr(0,100)+"...";
+                this.storeModel.abstract = input.value.substr(0, 100) +'...';
             }
 
         }
@@ -724,19 +724,19 @@ export class AccountMyStoreComponent implements OnInit, OnDestroy {
         Validamos la ciudad de la tienda
         =============================================*/
 
-         if($(input).attr("name") == "storeCity"){
+        if ($(input).attr('name') == 'storeCity'){
 
             /*=============================================
             Validamos expresión regular de la ciudad de la tienda
-            =============================================*/ 
+            =============================================*/
 
-            let pattern = /^[A-Za-zñÑáéíóúÁÉÍÓÚ ]{1,}$/;
+            const pattern = /^[A-Za-zñÑáéíóúÁÉÍÓÚ ]{1,}$/;
 
-            if(!pattern.test(input.value)){
+            if (!pattern.test(input.value)){
 
                 $(input).parent().addClass('was-validated');
 
-                input.value = "";
+                input.value = '';
 
                 return;
 
@@ -748,19 +748,19 @@ export class AccountMyStoreComponent implements OnInit, OnDestroy {
         Validamos el teléfono de la tienda
         =============================================*/
 
-         if($(input).attr("name") == "storePhone"){
+        if ($(input).attr('name') == 'storePhone'){
 
             /*=============================================
             Validamos expresión regular del teléfono de la tienda
-            =============================================*/ 
+            =============================================*/
 
-            let pattern = /^[-\\0-9 ]{1,}$/;
+            const pattern = /^[-\\0-9 ]{1,}$/;
 
-            if(!pattern.test(input.value)){
+            if (!pattern.test(input.value)){
 
                 $(input).parent().addClass('was-validated');
 
-                input.value = "";
+                input.value = '';
 
                 return;
 
@@ -772,19 +772,19 @@ export class AccountMyStoreComponent implements OnInit, OnDestroy {
         Validamos la dirección de la tienda
         =============================================*/
 
-         if($(input).attr("name") == "storeAddress"){
+        if ($(input).attr('name') == 'storeAddress'){
 
             /*=============================================
             Validamos expresión regular de la dirección de la tienda
-            =============================================*/ 
+            =============================================*/
 
-            let pattern = /^[-\\(\\)\\=\\%\\&\\$\\;\\_\\*\\"\\#\\?\\¿\\!\\¡\\:\\,\\.\\0-9a-zA-ZñÑáéíóúÁÉÍÓÚ ]{1,1000}$/;
+            const pattern = /^[-\\(\\)\\=\\%\\&\\$\\;\\_\\*\\"\\#\\?\\¿\\!\\¡\\:\\,\\.\\0-9a-zA-ZñÑáéíóúÁÉÍÓÚ ]{1,1000}$/;
 
-            if(!pattern.test(input.value)){
+            if (!pattern.test(input.value)){
 
                 $(input).parent().addClass('was-validated');
 
-                input.value = "";
+                input.value = '';
 
                 return;
 
@@ -796,15 +796,15 @@ export class AccountMyStoreComponent implements OnInit, OnDestroy {
         Validamos las redes sociales de la tienda
         =============================================*/
 
-        if($(input).attr("social") == "socialNetwork"){
+        if ($(input).attr('social') == 'socialNetwork'){
 
             /*=============================================
             Validamos expresión regular de la dirección de la tienda
-            =============================================*/ 
+            =============================================*/
 
-            let pattern = /^[-\\_\\.\\0-9a-zA-Z]{1,}$/;
+            const pattern = /^[-\\_\\.\\0-9a-zA-Z]{1,}$/;
 
-            if(!pattern.test(input.value)){
+            if (!pattern.test(input.value)){
 
                 $(input).parent().addClass('was-validated');
 
@@ -820,19 +820,19 @@ export class AccountMyStoreComponent implements OnInit, OnDestroy {
         Validamos el nombre de la tienda
         =============================================*/
 
-        if($(input).attr("name") == "productName"){
+        if ($(input).attr('name') == 'productName'){
 
              /*=============================================
             Validamos expresión regular del nombre de la tienda
-            =============================================*/ 
+            =============================================*/
 
-            let pattern = /^[A-Za-z0-9ñÑáéíóúÁÉÍÓÚ ]{1,}$/;
+            const pattern = /^[A-Za-z0-9ñÑáéíóúÁÉÍÓÚ ]{1,}$/;
 
-            if(!pattern.test(input.value)){
+            if (!pattern.test(input.value)){
 
                 $(input).parent().addClass('was-validated');
 
-                input.value = "";
+                input.value = '';
 
                 return;
 
@@ -841,16 +841,16 @@ export class AccountMyStoreComponent implements OnInit, OnDestroy {
                 /*=============================================
                 Validamos que el nombre del producto no esté repetido
                 =============================================*/
-                this.productsService.getFilterDataMyStore("name", input.value)
-                .subscribe(resp=>{
+                this.productsService.getFilterDataMyStore('name', input.value)
+                .subscribe(resp => {
 
-                    if(Object.keys(resp).length > 0){
+                    if (Object.keys(resp).length > 0){
 
                         $(input).parent().addClass('was-validated');
-                        input.value = "";
-                        this.productModel.url = "";
+                        input.value = '';
+                        this.productModel.url = '';
 
-                        Sweetalert.fnc("error", "Product name already exists", null)
+                        Sweetalert.fnc('error', 'Product name already exists', null);
 
                         return;
 
@@ -870,7 +870,7 @@ export class AccountMyStoreComponent implements OnInit, OnDestroy {
 
                     }
 
-                })
+                });
 
 
 
@@ -883,19 +883,19 @@ export class AccountMyStoreComponent implements OnInit, OnDestroy {
         Validamos los TAGS de los Banner's y Slider's
         =============================================*/
 
-        if($(input).attr("tags") == "tags"){
+        if ($(input).attr('tags') == 'tags'){
 
             /*=============================================
             Validamos expresión regular
-            =============================================*/ 
+            =============================================*/
 
-            let pattern = /^[-\\(\\)\\=\\%\\&\\$\\;\\_\\*\\'\\#\\?\\¿\\!\\¡\\:\\,\\.\\0-9a-zA-ZñÑáéíóúÁÉÍÓÚ ]{1,50}$/;
+            const pattern = /^[-\\(\\)\\=\\%\\&\\$\\;\\_\\*\\'\\#\\?\\¿\\!\\¡\\:\\,\\.\\0-9a-zA-ZñÑáéíóúÁÉÍÓÚ ]{1,50}$/;
 
-            if(!pattern.test(input.value)){
+            if (!pattern.test(input.value)){
 
                 $(input).parent().addClass('was-validated');
 
-                input.value = "";
+                input.value = '';
 
                 return;
 
@@ -907,15 +907,15 @@ export class AccountMyStoreComponent implements OnInit, OnDestroy {
         Validamos el video del producto
         =============================================*/
 
-        if($(input).attr("name") == "id_video"){
+        if ($(input).attr('name') == 'id_video'){
 
             /*=============================================
             Validamos expresión regular
-            =============================================*/ 
+            =============================================*/
 
-            let pattern = /^[-\\(\\)\\=\\%\\&\\$\\;\\_\\*\\"\\#\\?\\¿\\!\\¡\\:\\,\\.\\0-9a-zA-ZñÑáéíóúÁÉÍÓÚ ]{1,100}$/;
+            const pattern = /^[-\\(\\)\\=\\%\\&\\$\\;\\_\\*\\"\\#\\?\\¿\\!\\¡\\:\\,\\.\\0-9a-zA-ZñÑáéíóúÁÉÍÓÚ ]{1,100}$/;
 
-            if(!pattern.test(input.value)){
+            if (!pattern.test(input.value)){
 
                 $(input).parent().addClass('was-validated');
 
@@ -929,15 +929,15 @@ export class AccountMyStoreComponent implements OnInit, OnDestroy {
         Validamos el precio de envío y el precio de venta
         =============================================*/
 
-        if($(input).attr("tags") == "prices"){
+        if ($(input).attr('tags') == 'prices'){
 
             /*=============================================
             Validamos expresión regular
-            =============================================*/ 
+            =============================================*/
 
-            let pattern = /^[.\\,\\0-9]{1,}$/;
+            const pattern = /^[.\\,\\0-9]{1,}$/;
 
-            if(!pattern.test(input.value)){
+            if (!pattern.test(input.value)){
 
                 $(input).parent().addClass('was-validated');
 
@@ -951,15 +951,15 @@ export class AccountMyStoreComponent implements OnInit, OnDestroy {
         Validamos dias de entrega y stock
         =============================================*/
 
-        if($(input).attr("tags") == "intNumber"){
+        if ($(input).attr('tags') == 'intNumber'){
 
             /*=============================================
             Validamos expresión regular
-            =============================================*/ 
+            =============================================*/
 
-            let pattern = /^[0-9]{1,}$/;
+            const pattern = /^[0-9]{1,}$/;
 
-            if(!pattern.test(input.value)){
+            if (!pattern.test(input.value)){
 
                 $(input).parent().addClass('was-validated');
 
@@ -967,11 +967,11 @@ export class AccountMyStoreComponent implements OnInit, OnDestroy {
 
             }else{
 
-                if($(input).attr("name") == "stock" &&  input.value > 100){
+                if ($(input).attr('name') == 'stock' &&  input.value > 100){
 
-                    input.value = "";
+                    input.value = '';
 
-                    Sweetalert.fnc("error", "The product exceeds 100 units", null)
+                    Sweetalert.fnc('error', 'The product exceeds 100 units', null);
 
                     return;
 
@@ -989,47 +989,47 @@ export class AccountMyStoreComponent implements OnInit, OnDestroy {
 
     validateImage(e, tagPicture){
 
-    	switch(tagPicture){
+    	switch (tagPicture){
 
-            case "changeLogo":
+            case 'changeLogo':
             this.logoStore = e.target.files[0];
             break;
 
-            case "changeCover":
+            case 'changeCover':
             this.coverStore = e.target.files[0];
             break;
 
-            case "changeImage":
+            case 'changeImage':
             this.imageProduct = e.target.files[0];
             break;
 
-            case "changeTopBanner":
+            case 'changeTopBanner':
             this.topBannerImg = e.target.files[0];
             break;
 
-            case "changeDefaultBanner":
+            case 'changeDefaultBanner':
             this.defaultBannerImg = e.target.files[0];
             break;
 
-            case "changeHSlider":
+            case 'changeHSlider':
             this.hSliderImg = e.target.files[0];
             break;
 
-            case "changeVSlider":
+            case 'changeVSlider':
             this.vSliderImg = e.target.files[0];
             break;
 
         }
 
-        let image = e.target.files[0];
+     let image = e.target.files[0];
 
         /*=============================================
         Validamos el formato
         =============================================*/
 
-        if(image["type"] !== "image/jpeg" && image["type"] !== "image/png"){
+     if (image['type'] !== 'image/jpeg' && image['type'] !== 'image/png'){
 
-            Sweetalert.fnc("error", "The image must be in JPG or PNG format", null)
+            Sweetalert.fnc('error', 'The image must be in JPG or PNG format', null);
 
             return;
         }
@@ -1038,9 +1038,9 @@ export class AccountMyStoreComponent implements OnInit, OnDestroy {
         Validamos el tamaño
         =============================================*/
 
-        else if(image["size"] > 2000000){
+        else if (image['size'] > 2000000){
 
-            Sweetalert.fnc("error", "Image must not weigh more than 2MB", null)
+            Sweetalert.fnc('error', 'Image must not weigh more than 2MB', null);
 
             return;
         }
@@ -1051,33 +1051,33 @@ export class AccountMyStoreComponent implements OnInit, OnDestroy {
 
         else{
 
-            let data = new FileReader();
+            const data = new FileReader();
             data.readAsDataURL(image);
 
-            $(data).on("load", function(event){
+            $(data).on('load', function(event){
 
-                let path = event.target.result; 
+                const path = event.target.result;
 
-                $(`.${tagPicture}`).attr("src", path)
+                $(`.${tagPicture}`).attr('src', path);
 
-            })
+            });
 
         }
     }
 
 	/*=============================================
 	Envío de formulario de la edición de la tienda
-	=============================================*/ 
+	=============================================*/
 
-	onSubmitStore(f:NgForm){
-		
+	onSubmitStore(f: NgForm){
+
 		/*=============================================
         Validación completa del formulario
         =============================================*/
 
-        if(f.invalid){
+        if (f.invalid){
 
-            Sweetalert.fnc("error", "Invalid Request", null);
+            Sweetalert.fnc('error', 'Invalid Request', null);
 
             return;
         }
@@ -1086,34 +1086,34 @@ export class AccountMyStoreComponent implements OnInit, OnDestroy {
         Alerta suave mientras se edita la tienda
         =============================================*/
 
-        Sweetalert.fnc("loading", "Loading...", null);
+        Sweetalert.fnc('loading', 'Loading...', null);
 
         /*=============================================
         Subir imagenes al servidor
         =============================================*/
         let countAllImages = 0;
-        
-        let allImages = [
+
+        const allImages = [
             {
-                type:'logoStore',
+                type: 'logoStore',
                 file: this.logoStore,
-                folder:this.storeModel.url,
-                path:'stores',
-                width:'270',
-                height:'270'
+                folder: this.storeModel.url,
+                path: 'stores',
+                width: '270',
+                height: '270'
             },
             {
-                type:'coverStore',
+                type: 'coverStore',
                 file: this.coverStore,
-                folder:this.storeModel.url,
-                path:'stores',
-                width:'1424',
-                height:'768'
+                folder: this.storeModel.url,
+                path: 'stores',
+                width: '1424',
+                height: '768'
             }
 
-        ]
+        ];
 
-        for(const i in allImages){
+        for (const i in allImages){
 
             const formData = new FormData();
 
@@ -1124,11 +1124,11 @@ export class AccountMyStoreComponent implements OnInit, OnDestroy {
             formData.append('height', allImages[i].height);
 
             this.http.post(this.server, formData)
-            .subscribe( resp=>{   
+            .subscribe( resp => {
 
-                if(resp["status"] != null && resp["status"] == 200){
+                if (resp['status'] != null && resp['status'] == 200){
 
-                    if(allImages[i].type == "logoStore"){
+                    if (allImages[i].type == 'logoStore'){
 
                         /*=============================================
                         Borrar antigua imagen del servidor
@@ -1136,18 +1136,18 @@ export class AccountMyStoreComponent implements OnInit, OnDestroy {
 
                         const formData = new FormData();
 
-                        let fileDelete = `${allImages[i].path}/${allImages[i].folder}/${this.storeModel.logo}`;
+                        const fileDelete = `${allImages[i].path}/${allImages[i].folder}/${this.storeModel.logo}`;
 
-                        formData.append("fileDelete", fileDelete);
+                        formData.append('fileDelete', fileDelete);
 
                         this.http.post(this.serverDelete, formData)
-                        .subscribe(resp=>{})
+                        .subscribe(resp => {});
 
-                        this.storeModel.logo = resp["result"];    
-                                     
+                        this.storeModel.logo = resp['result'];
+
                     }
-      
-                    if(allImages[i].type == "coverStore"){
+
+                    if (allImages[i].type == 'coverStore'){
 
                          /*=============================================
                         Borrar antigua imagen del servidor
@@ -1155,26 +1155,26 @@ export class AccountMyStoreComponent implements OnInit, OnDestroy {
 
                         const formData = new FormData();
 
-                        let fileDelete = `${allImages[i].path}/${allImages[i].folder}/${this.storeModel.cover}`;
+                        const fileDelete = `${allImages[i].path}/${allImages[i].folder}/${this.storeModel.cover}`;
 
-                        formData.append("fileDelete", fileDelete);
+                        formData.append('fileDelete', fileDelete);
 
                         this.http.post(this.serverDelete, formData)
-                        .subscribe(resp=>{})
+                        .subscribe(resp => {});
 
-                        this.storeModel.cover = resp["result"];
-                      
+                        this.storeModel.cover = resp['result'];
+
                     }
 
                 }
 
-                countAllImages++; 
+                countAllImages++;
 
                 /*=============================================
 	            Preguntamos cuando termina de subir todas las imágenes
 	            =============================================*/
 
-	            if(countAllImages == allImages.length){
+	               if (countAllImages == allImages.length){
 
 	            	/*=============================================
 			        Consolidar número telefónico de la tienda
@@ -1186,11 +1186,11 @@ export class AccountMyStoreComponent implements OnInit, OnDestroy {
 			        Consolidar redes sociales para la tienda
 			        =============================================*/
 
-			        for(const i in Object.keys(this.social)){
+			        for (const i in Object.keys(this.social)){
 
-			            if(this.social[Object.keys(this.social)[i]] != ""){
+			            if (this.social[Object.keys(this.social)[i]] != ''){
 
-			                this.social[Object.keys(this.social)[i]] = `https://${Object.keys(this.social)[i]}.com/${this.social[Object.keys(this.social)[i]]}`
+			                this.social[Object.keys(this.social)[i]] = `https://${Object.keys(this.social)[i]}.com/${this.social[Object.keys(this.social)[i]]}`;
 
 			            }
 
@@ -1202,20 +1202,20 @@ export class AccountMyStoreComponent implements OnInit, OnDestroy {
 	                Editar la tienda en la BD
 	                =============================================*/
 
-	                this.storesService.patchDataAuth(this.idStore, this.storeModel, localStorage.getItem("idToken"))
-	                .subscribe(resp=>{ 
-					
-	                	 Sweetalert.fnc("success", "The store was successfully updated", "account/my-store");  
-	                        
-					}, err =>{
+	          this.storesService.patchDataAuth(this.idStore, this.storeModel, localStorage.getItem('idToken'))
+	                .subscribe(resp => {
 
-	                    Sweetalert.fnc("error", err.error.error.message, null)
+	                	 Sweetalert.fnc('success', 'The store was successfully updated', 'account/my-store');
 
-	                })
+					}, err => {
+
+	                    Sweetalert.fnc('error', err.error.error.message, null);
+
+	                });
 
 	            }
 
-            })
+            });
 
         }
 
@@ -1227,19 +1227,19 @@ export class AccountMyStoreComponent implements OnInit, OnDestroy {
 
     changeCategory(input){
 
-        let category = input.value.split("_")[0];
+        const category = input.value.split('_')[0];
 
-        this.subCategoriesService.getFilterData("category", category)
-        .subscribe(resp=>{
+        this.subCategoriesService.getFilterData('category', category)
+        .subscribe(resp => {
 
             this.subcategories = [];
 
-            for(const i in resp){
+            for (const i in resp){
 
-                this.subcategories.push(resp[i])
+                this.subcategories.push(resp[i]);
             }
 
-        })
+        });
 
     }
 
@@ -1249,55 +1249,55 @@ export class AccountMyStoreComponent implements OnInit, OnDestroy {
 
     addInput(type){
 
-        if(type == "summary"){
+        if (type == 'summary'){
 
-            if(this.summaryGroup.length < 5){
+            if (this.summaryGroup.length < 5){
 
                 this.summaryGroup.push({
 
-                    input:''
-                })
+                    input: ''
+                });
 
             }else{
 
-                Sweetalert.fnc("error", "Entry limit has been exceeded", null)
+                Sweetalert.fnc('error', 'Entry limit has been exceeded', null);
 
             }
 
         }
 
-        if(type == "details"){
+        if (type == 'details'){
 
-            if(this.detailsGroup.length < 10){
+            if (this.detailsGroup.length < 10){
 
                 this.detailsGroup.push({
 
-                    title:'',
-                    value:''
-                })
+                    title: '',
+                    value: ''
+                });
 
             }else{
 
-                Sweetalert.fnc("error", "Entry limit has been exceeded", null)
+                Sweetalert.fnc('error', 'Entry limit has been exceeded', null);
 
             }
 
         }
 
 
-        if(type == "specifications"){
+        if (type == 'specifications'){
 
-            if(this.specificationsGroup.length < 5){
+            if (this.specificationsGroup.length < 5){
 
                 this.specificationsGroup.push({
 
-                    type:'',
-                    values:''
-                })
+                    type: '',
+                    values: ''
+                });
 
             }else{
 
-                Sweetalert.fnc("error", "Entry limit has been exceeded", null)
+                Sweetalert.fnc('error', 'Entry limit has been exceeded', null);
 
             }
 
@@ -1311,23 +1311,23 @@ export class AccountMyStoreComponent implements OnInit, OnDestroy {
 
     removeInput(i, type){
 
-        if(i > 0){
+        if (i > 0){
 
-            if(type == "summary"){
+            if (type == 'summary'){
 
-                this.summaryGroup.splice(i, 1) 
-
-            }
-
-            if(type == "details"){
-
-                this.detailsGroup.splice(i, 1) 
+                this.summaryGroup.splice(i, 1)
 
             }
 
-            if(type == "specifications"){
+            if (type == 'details'){
 
-                this.specificationsGroup.splice(i, 1) 
+                this.detailsGroup.splice(i, 1)
+
+            }
+
+            if (type == 'specifications'){
+
+                this.specificationsGroup.splice(i, 1)
 
             }
         }
@@ -1339,12 +1339,12 @@ export class AccountMyStoreComponent implements OnInit, OnDestroy {
     =============================================*/
 
     onSelect(event) {
-        
+
         this.gallery.push(...event.addedFiles);
     }
 
     onRemove(event) {
-     
+
         this.gallery.splice(this.gallery.indexOf(event), 1);
     }
 
@@ -1360,7 +1360,7 @@ export class AccountMyStoreComponent implements OnInit, OnDestroy {
         Alerta suave mientras se carga el formulario de edición
         =============================================*/
 
-        Sweetalert.fnc("loading", "Loading...", null);
+        Sweetalert.fnc('loading', 'Loading...', null);
 
         /*=============================================
         Traemos la data del producto
@@ -1369,23 +1369,23 @@ export class AccountMyStoreComponent implements OnInit, OnDestroy {
         this.editProductAction = true;
 
         this.productsService.getUniqueData(idProduct)
-        .subscribe(resp=>{  
+        .subscribe(resp => {
 
-            this.productModel.name = resp["name"];
-            this.productModel.url = resp["url"]; 
-            this.productModel.category = resp["category"];
-            this.productModel.sub_category = resp["sub_category"];
-            this.productModel.title_list = resp["title_list"];
-            this.productModel.description = resp["description"];
-            this.productModel.views = resp["views"];
-            this.productModel.sales = resp["sales"];
-            this.productModel.image = resp["image"]; 
-            this.productModel.default_banner = resp["default_banner"]; 
-            this.productModel.vertical_slider = resp["vertical_slider"]; 
-            this.productModel.price = resp["price"];
-            this.productModel.shipping = resp["shipping"];
-            this.productModel.delivery_time = resp["delivery_time"];
-            this.productModel.stock = resp["stock"];
+            this.productModel.name = resp['name'];
+            this.productModel.url = resp['url'];
+            this.productModel.category = resp['category'];
+            this.productModel.sub_category = resp['sub_category'];
+            this.productModel.title_list = resp['title_list'];
+            this.productModel.description = resp['description'];
+            this.productModel.views = resp['views'];
+            this.productModel.sales = resp['sales'];
+            this.productModel.image = resp['image'];
+            this.productModel.default_banner = resp['default_banner'];
+            this.productModel.vertical_slider = resp['vertical_slider'];
+            this.productModel.price = resp['price'];
+            this.productModel.shipping = resp['shipping'];
+            this.productModel.delivery_time = resp['delivery_time'];
+            this.productModel.stock = resp['stock'];
 
             /*=============================================
             Cargar el resumen del producto
@@ -1393,155 +1393,155 @@ export class AccountMyStoreComponent implements OnInit, OnDestroy {
 
             this.summaryGroup = [];
 
-            JSON.parse(resp["summary"]).forEach(value=>{
+            JSON.parse(resp['summary']).forEach(value => {
 
                 this.summaryGroup.push({
 
-                    input:value
+                    input: value
 
-                })
+                });
 
-            })  
+            })
 
             /*=============================================
             Cargar los detalles del producto
             =============================================*/
 
-            this.detailsGroup = []; 
+            this.detailsGroup = [];
 
-            JSON.parse(resp["details"]).forEach(detail=>{
+            JSON.parse(resp['details']).forEach(detail => {
 
                 this.detailsGroup.push({
 
-                    title:detail.title,
-                    value:detail.value
+                    title: detail.title,
+                    value: detail.value
 
-                })
+                });
 
-            }) 
-
-            /*=============================================
-            Cargar las especificaciones del producto
-            =============================================*/  
-
-            this.specificationsGroup = [];  
-
-            JSON.parse(resp["specification"]).forEach(spec=>{
-
-                for(const i in spec){
-
-                    this.specificationsGroup.push({
-
-                        type:i,
-                        values:spec[i]
-
-                    })
-
-                }
-               
             })
 
             /*=============================================
             Cargar las especificaciones del producto
-            =============================================*/ 
+            =============================================*/
 
-            JSON.parse(resp["tags"]).forEach(item=>{
-               
-                this.tags.push(item)
+            this.specificationsGroup = [];
 
-            })  
+            JSON.parse(resp['specification']).forEach(spec => {
+
+                for (const i in spec){
+
+                    this.specificationsGroup.push({
+
+                        type: i,
+                        values: spec[i]
+
+                    });
+
+                }
+
+            });
+
+            /*=============================================
+            Cargar las especificaciones del producto
+            =============================================*/
+
+            JSON.parse(resp['tags']).forEach(item => {
+
+                this.tags.push(item);
+
+            })
 
             /*=============================================
             Cargar la galería del producto
-            =============================================*/  
+            =============================================*/
 
-            JSON.parse(resp["gallery"]).forEach(item=>{
-               
-                this.editGallery.push(item)
-              
-            }) 
+            JSON.parse(resp['gallery']).forEach(item => {
+
+                this.editGallery.push(item);
+
+            })
 
             /*=============================================
             Carga del banner superior del producto
             =============================================*/
-               
-            this.topBanner["H3 tag"] = JSON.parse(resp["top_banner"])["H3 tag"];
-            this.topBanner["P1 tag"] = JSON.parse(resp["top_banner"])["P1 tag"];
-            this.topBanner["H4 tag"] = JSON.parse(resp["top_banner"])["H4 tag"];
-            this.topBanner["P2 tag"] = JSON.parse(resp["top_banner"])["P2 tag"];
-            this.topBanner["Span tag"] = JSON.parse(resp["top_banner"])["Span tag"];
-            this.topBanner["Button tag"] = JSON.parse(resp["top_banner"])["Button tag"];
-            this.topBanner["IMG tag"] = JSON.parse(resp["top_banner"])["IMG tag"];
+
+            this.topBanner['H3 tag'] = JSON.parse(resp['top_banner'])['H3 tag'];
+            this.topBanner['P1 tag'] = JSON.parse(resp['top_banner'])['P1 tag'];
+            this.topBanner['H4 tag'] = JSON.parse(resp['top_banner'])['H4 tag'];
+            this.topBanner['P2 tag'] = JSON.parse(resp['top_banner'])['P2 tag'];
+            this.topBanner['Span tag'] = JSON.parse(resp['top_banner'])['Span tag'];
+            this.topBanner['Button tag'] = JSON.parse(resp['top_banner'])['Button tag'];
+            this.topBanner['IMG tag'] = JSON.parse(resp['top_banner'])['IMG tag'];
 
             /*=============================================
             Carga del slide horizontal del producto
             =============================================*/
 
-            this.hSlider["H4 tag"] = JSON.parse(resp["horizontal_slider"])["H4 tag"];
-            this.hSlider["H3-1 tag"] = JSON.parse(resp["horizontal_slider"])["H3-1 tag"];
-            this.hSlider["H3-2 tag"] = JSON.parse(resp["horizontal_slider"])["H3-2 tag"];
-            this.hSlider["H3-3 tag"] = JSON.parse(resp["horizontal_slider"])["H3-3 tag"];
-            this.hSlider["H3-4s tag"] = JSON.parse(resp["horizontal_slider"])["H3-4s tag"];
-            this.hSlider["Button tag"] = JSON.parse(resp["horizontal_slider"])["Button tag"];
-            this.hSlider["IMG tag"] = JSON.parse(resp["horizontal_slider"])["IMG tag"];
+            this.hSlider['H4 tag'] = JSON.parse(resp['horizontal_slider'])['H4 tag'];
+            this.hSlider['H3-1 tag'] = JSON.parse(resp['horizontal_slider'])['H3-1 tag'];
+            this.hSlider['H3-2 tag'] = JSON.parse(resp['horizontal_slider'])['H3-2 tag'];
+            this.hSlider['H3-3 tag'] = JSON.parse(resp['horizontal_slider'])['H3-3 tag'];
+            this.hSlider['H3-4s tag'] = JSON.parse(resp['horizontal_slider'])['H3-4s tag'];
+            this.hSlider['Button tag'] = JSON.parse(resp['horizontal_slider'])['Button tag'];
+            this.hSlider['IMG tag'] = JSON.parse(resp['horizontal_slider'])['IMG tag'];
 
             /*=============================================
             Carga del video del producto
             =============================================*/
 
-            JSON.parse(resp["video"]).forEach(value=>{
+            JSON.parse(resp['video']).forEach(value => {
 
                 this.video.push(value);
-               
-            }) 
+
+            })
 
             /*=============================================
             Carga de las ofertas del producto
             =============================================*/
 
-            if(resp["offer"] != ""){
+            if (resp['offer'] != ''){
 
-                JSON.parse(resp["offer"]).forEach(value=>{
+                JSON.parse(resp['offer']).forEach(value => {
 
                     this.offer.push(value);
-                   
-                })  
 
-            }  
+                })
+
+            }
 
             /*=============================================
             Abrir la ventana modal
-            =============================================*/  
+            =============================================*/
 
-            $("#formProduct").modal() 
+            $('#formProduct').modal()
 
             /*=============================================
             Cerrar la Alerta suave
             =============================================*/
 
-            Sweetalert.fnc("close", "", null);
+            Sweetalert.fnc('close', '', null);
 
-        })
+        });
 
     }
 
     /*=============================================
     Removemos foto de la galería
-    =============================================*/  
+    =============================================*/
 
     removeGallery(pic){
 
-        this.editGallery.forEach((name,index)=>{
+        this.editGallery.forEach((name, index) => {
 
-            if(pic == name){
+            if (pic == name){
 
                 this.deleteGallery.push(pic);
 
                 this.editGallery.splice(index, 1);
-            
+
             }
 
-        })
+        });
 
     }
 
@@ -1549,19 +1549,19 @@ export class AccountMyStoreComponent implements OnInit, OnDestroy {
     Formulario para la creación o edición de productos
     =============================================*/
 
-    onSubmitProduct(f:NgForm){
-        
+    onSubmitProduct(f: NgForm){
+
         /*=============================================
         Validar que el producto esté correctamente creado
         =============================================*/
 
-        let formProduct = $(".formProduct");
+        const formProduct = $('.formProduct');
 
-        for(let i = 0; i < formProduct.length; i++){
+        for (let i = 0; i < formProduct.length; i++){
 
-            if($(formProduct[i]).val() == "" || $(formProduct[i]).val() == undefined){
+            if ($(formProduct[i]).val() == '' || $(formProduct[i]).val() == undefined){
 
-                $(formProduct[i]).parent().addClass("was-validated")
+                $(formProduct[i]).parent().addClass('was-validated');
 
             }
         }
@@ -1570,9 +1570,9 @@ export class AccountMyStoreComponent implements OnInit, OnDestroy {
         Validamos que las palabras claves tenga como mínimo una sola palabra
         =============================================*/
 
-        if(this.tags.length == 0){
+        if (this.tags.length == 0){
 
-            Sweetalert.fnc("error", "Product Tags is empty", null);  
+            Sweetalert.fnc('error', 'Product Tags is empty', null);
 
             return;
 
@@ -1582,11 +1582,11 @@ export class AccountMyStoreComponent implements OnInit, OnDestroy {
         Validamos que la galería tenga como mínimo una sola imagen
         =============================================*/
 
-        if(!this.editProductAction){
+        if (!this.editProductAction){
 
-            if(this.gallery.length == 0){
+            if (this.gallery.length == 0){
 
-                Sweetalert.fnc("error", "Product Gallery is empty", null);  
+                Sweetalert.fnc('error', 'Product Gallery is empty', null);
 
                 return;
 
@@ -1594,9 +1594,9 @@ export class AccountMyStoreComponent implements OnInit, OnDestroy {
 
         }else{
 
-            if(this.editGallery.length == 0 && this.gallery.length == 0){
+            if (this.editGallery.length == 0 && this.gallery.length == 0){
 
-                Sweetalert.fnc("error", "Product Gallery is empty", null);  
+                Sweetalert.fnc('error', 'Product Gallery is empty', null);
 
                 return;
 
@@ -1608,28 +1608,28 @@ export class AccountMyStoreComponent implements OnInit, OnDestroy {
         Validación completa del formulario
         =============================================*/
 
-         if(f.invalid){
+        if (f.invalid){
 
-             Sweetalert.fnc("error", "Invalid Request", null);
+             Sweetalert.fnc('error', 'Invalid Request', null);
 
-            return;
+             return;
         }
 
         /*=============================================
         Alerta suave mientras se registra la tienda y el producto
         =============================================*/
 
-        Sweetalert.fnc("loading", "Loading...", null);
+        Sweetalert.fnc('loading', 'Loading...', null);
 
         /*=============================================
         Subir imagenes al servidor
         =============================================*/
 
-        let folder = "";
+        let folder = '';
 
-        if(!this.editProductAction){
+        if (!this.editProductAction){
 
-            folder = this.productModel.category.split("_")[1];
+            folder = this.productModel.category.split('_')[1];
 
         }else{
 
@@ -1638,52 +1638,52 @@ export class AccountMyStoreComponent implements OnInit, OnDestroy {
 
         let countAllImages = 0;
 
-        let allImages = [
-           
+        const allImages = [
+
             {
-                type:'imageProduct',
+                type: 'imageProduct',
                 file: this.imageProduct,
-                folder:folder,
-                path:'products',
-                width:'300',
-                height:'300'
+                folder,
+                path: 'products',
+                width: '300',
+                height: '300'
             },
             {
-                type:'topBannerImg',
+                type: 'topBannerImg',
                 file: this.topBannerImg,
-                folder:`${folder}/top`,
-                path:'products',
-                width:'1920',
-                height:'80'
+                folder: `${folder}/top`,
+                path: 'products',
+                width: '1920',
+                height: '80'
             },
             {
-                type:'defaultBannerImg',
+                type: 'defaultBannerImg',
                 file: this.defaultBannerImg,
-                folder:`${folder}/default`,
-                path:'products',
-                width:'570',
-                height:'210'
+                folder: `${folder}/default`,
+                path: 'products',
+                width: '570',
+                height: '210'
             },
             {
-                type:'hSliderImg',
+                type: 'hSliderImg',
                 file: this.hSliderImg,
-                folder:`${folder}/horizontal`,
-                path:'products',
-                width:'1920',
-                height:'358'
+                folder: `${folder}/horizontal`,
+                path: 'products',
+                width: '1920',
+                height: '358'
             },
             {
-                type:'vSliderImg',
+                type: 'vSliderImg',
                 file: this.vSliderImg,
-                folder:`${folder}/vertical`,
-                path:'products',
-                width:'263',
-                height:'629'
+                folder: `${folder}/vertical`,
+                path: 'products',
+                width: '263',
+                height: '629'
             }
 
-        ]
+        ];
 
-        for(const i in allImages){
+        for (const i in allImages){
 
             const formData = new FormData();
 
@@ -1694,13 +1694,13 @@ export class AccountMyStoreComponent implements OnInit, OnDestroy {
             formData.append('height', allImages[i].height);
 
             this.http.post(this.server, formData)
-            .subscribe( resp=>{   
+            .subscribe( resp => {
 
-                if(resp["status"] != null && resp["status"] == 200){
+                if (resp['status'] != null && resp['status'] == 200){
 
-                    if(allImages[i].type == "imageProduct"){
+                    if (allImages[i].type == 'imageProduct'){
 
-                        if(this.editProductAction){
+                        if (this.editProductAction){
 
                             /*=============================================
                             Borrar antigua imagen del servidor
@@ -1708,22 +1708,22 @@ export class AccountMyStoreComponent implements OnInit, OnDestroy {
 
                             const formData = new FormData();
 
-                            let fileDelete = `${allImages[i].path}/${allImages[i].folder}/${this.productModel.image}`;
+                            const fileDelete = `${allImages[i].path}/${allImages[i].folder}/${this.productModel.image}`;
 
-                            formData.append("fileDelete", fileDelete);
+                            formData.append('fileDelete', fileDelete);
 
                             this.http.post(this.serverDelete, formData)
-                            .subscribe(resp=>{})
+                            .subscribe(resp => {});
 
                         }
 
-                        this.productModel.image = resp["result"];
+                        this.productModel.image = resp['result'];
 
                     }
 
-                    if(allImages[i].type == "topBannerImg"){
+                    if (allImages[i].type == 'topBannerImg'){
 
-                        if(this.editProductAction){
+                        if (this.editProductAction){
 
                             /*=============================================
                             Borrar antigua imagen del servidor
@@ -1731,22 +1731,22 @@ export class AccountMyStoreComponent implements OnInit, OnDestroy {
 
                             const formData = new FormData();
 
-                            let fileDelete = `${allImages[i].path}/${allImages[i].folder}/${this.topBanner["IMG tag"]}`;
+                            const fileDelete = `${allImages[i].path}/${allImages[i].folder}/${this.topBanner['IMG tag']}`;
 
-                            formData.append("fileDelete", fileDelete);
+                            formData.append('fileDelete', fileDelete);
 
                             this.http.post(this.serverDelete, formData)
-                            .subscribe(resp=>{})
+                            .subscribe(resp => {});
 
                         }
 
-                        this.topBanner["IMG tag"] = resp["result"];
+                        this.topBanner['IMG tag'] = resp['result'];
 
                     }
 
-                    if(allImages[i].type == "defaultBannerImg"){
+                    if (allImages[i].type == 'defaultBannerImg'){
 
-                        if(this.editProductAction){
+                        if (this.editProductAction){
 
                             /*=============================================
                             Borrar antigua imagen del servidor
@@ -1754,22 +1754,22 @@ export class AccountMyStoreComponent implements OnInit, OnDestroy {
 
                             const formData = new FormData();
 
-                            let fileDelete = `${allImages[i].path}/${allImages[i].folder}/${this.productModel.default_banner}`;
+                            const fileDelete = `${allImages[i].path}/${allImages[i].folder}/${this.productModel.default_banner}`;
 
-                            formData.append("fileDelete", fileDelete);
+                            formData.append('fileDelete', fileDelete);
 
                             this.http.post(this.serverDelete, formData)
-                            .subscribe(resp=>{})
+                            .subscribe(resp => {});
 
                         }
 
-                        this.productModel.default_banner = resp["result"];
+                        this.productModel.default_banner = resp['result'];
 
                     }
 
-                    if(allImages[i].type == "hSliderImg"){
+                    if (allImages[i].type == 'hSliderImg'){
 
-                        if(this.editProductAction){
+                        if (this.editProductAction){
 
                             /*=============================================
                             Borrar antigua imagen del servidor
@@ -1777,22 +1777,22 @@ export class AccountMyStoreComponent implements OnInit, OnDestroy {
 
                             const formData = new FormData();
 
-                            let fileDelete = `${allImages[i].path}/${allImages[i].folder}/${this.hSlider["IMG tag"]}`;
+                            const fileDelete = `${allImages[i].path}/${allImages[i].folder}/${this.hSlider['IMG tag']}`;
 
-                            formData.append("fileDelete", fileDelete);
+                            formData.append('fileDelete', fileDelete);
 
                             this.http.post(this.serverDelete, formData)
-                            .subscribe(resp=>{})
+                            .subscribe(resp => {});
 
                         }
 
-                        this.hSlider["IMG tag"] = resp["result"];
+                        this.hSlider['IMG tag'] = resp['result'];
 
                     }
 
-                    if(allImages[i].type == "vSliderImg"){
+                    if (allImages[i].type == 'vSliderImg'){
 
-                        if(this.editProductAction){
+                        if (this.editProductAction){
 
                             /*=============================================
                             Borrar antigua imagen del servidor
@@ -1800,69 +1800,69 @@ export class AccountMyStoreComponent implements OnInit, OnDestroy {
 
                             const formData = new FormData();
 
-                            let fileDelete = `${allImages[i].path}/${allImages[i].folder}/${this.productModel.vertical_slider}`;
+                            const fileDelete = `${allImages[i].path}/${allImages[i].folder}/${this.productModel.vertical_slider}`;
 
-                            formData.append("fileDelete", fileDelete);
+                            formData.append('fileDelete', fileDelete);
 
                             this.http.post(this.serverDelete, formData)
-                            .subscribe(resp=>{})
+                            .subscribe(resp => {});
 
                         }
 
-                        this.productModel.vertical_slider = resp["result"];
+                        this.productModel.vertical_slider = resp['result'];
 
                     }
 
                 }
 
-                countAllImages++
+                countAllImages++;
 
                 /*=============================================
                 Preguntamos cuando termina de subir todas las imágenes
                 =============================================*/
 
-                if(countAllImages == allImages.length){
-                  
+                if (countAllImages == allImages.length){
 
-                    if(!this.editProductAction){
+
+                    if (!this.editProductAction){
 
                         /*=============================================
-                        Consolidar fecha de creación del producto   
+                        Consolidar fecha de creación del producto
                         =============================================*/
 
                         this.productModel.date_created = new Date();
-         
+
                         /*=============================================
                         Consolidar el feedback para el producto
                         =============================================*/
 
                         this.productModel.feedback = {
 
-                            type:"review",
-                            comment:"Your product is under review"
+                            type:'review',
+                            comment:'Your product is under review'
 
-                        }
+                        };
 
                         this.productModel.feedback = JSON.stringify(this.productModel.feedback);
 
-    
+
                         /*=============================================
                         Consolidar categoria para el producto
                         =============================================*/
-                    
-                        this.productModel.category = this.productModel.category.split("_")[1];
+
+                        this.productModel.category = this.productModel.category.split('_')[1];
 
                         /*=============================================
                         Consolidar lista de títulos para el producto
                         =============================================*/
 
-                        this.productModel.title_list = this.productModel.sub_category.split("_")[1];
+                        this.productModel.title_list = this.productModel.sub_category.split('_')[1];
 
                         /*=============================================
                         Consolidar sub-categoria para el producto
                         =============================================*/
 
-                        this.productModel.sub_category = this.productModel.sub_category.split("_")[0];
+                        this.productModel.sub_category = this.productModel.sub_category.split('_')[0];
 
 
                         /*=============================================
@@ -1875,28 +1875,28 @@ export class AccountMyStoreComponent implements OnInit, OnDestroy {
                         Consolidar calificaciones para el producto
                         =============================================*/
 
-                        this.productModel.reviews = "[]";
+                        this.productModel.reviews = '[]';
 
                         /*=============================================
                         Consolidar las ventas y las vistas del producto
                         =============================================*/
-                        this.productModel.sales = 0; 
-                        this.productModel.views = 0; 
+                        this.productModel.sales = 0;
+                        this.productModel.views = 0;
 
                     }
-   
+
 
                     /*=============================================
-                    Consolidar resumen del producto 
+                    Consolidar resumen del producto
                     =============================================*/
 
-                    let newSummary = [];
+                    const newSummary = [];
 
-                    for(const i in this.summaryGroup){
+                    for (const i in this.summaryGroup){
 
                         newSummary.push(this.summaryGroup[i].input);
                         this.productModel.summary = JSON.stringify(newSummary);
-                    
+
                     }
 
                     /*=============================================
@@ -1908,29 +1908,29 @@ export class AccountMyStoreComponent implements OnInit, OnDestroy {
                     /*=============================================
                     Consolidar especificaciones del producto
                     =============================================*/
-                    
-                    if(Object.keys(this.specificationsGroup).length > 0){
 
-                        let newSpecifications = [];
+                    if (Object.keys(this.specificationsGroup).length > 0){
 
-                        for(const i in this.specificationsGroup){
+                        const newSpecifications = [];
 
-                            let newValue = [];
+                        for (const i in this.specificationsGroup){
 
-                            for(const f in this.specificationsGroup[i].values){
+                            const newValue = [];
 
-                                if(this.specificationsGroup[i].values[f].value!= undefined){
+                            for (const f in this.specificationsGroup[i].values){
 
-                                    newValue.push(`'${this.specificationsGroup[i].values[f].value}'`)
+                                if (this.specificationsGroup[i].values[f].value != undefined){
+
+                                    newValue.push(`'${this.specificationsGroup[i].values[f].value}'`);
 
                                 }else{
 
-                                    newValue.push(`'${this.specificationsGroup[i].values[f]}'`)
+                                    newValue.push(`'${this.specificationsGroup[i].values[f]}'`);
                                 }
-                       
+
                             }
 
-                            newSpecifications.push(`{'${this.specificationsGroup[i].type}':[${newValue}]}`)
+                            newSpecifications.push(`{'${this.specificationsGroup[i].type}':[${newValue}]}`);
 
                         }
 
@@ -1940,29 +1940,29 @@ export class AccountMyStoreComponent implements OnInit, OnDestroy {
 
                     }else{
 
-                        this.productModel.specification = "";
-                       
+                        this.productModel.specification = '';
+
                     }
 
                     /*=============================================
                      Consolidar palabras claves para el producto
                     =============================================*/
 
-                    let newTags = [];  
+                    const newTags = [];
 
-                    for(const i in this.tags){
+                    for (const i in this.tags){
 
-                        if(this.tags[i].value!= undefined){
+                        if (this.tags[i].value != undefined){
 
                             newTags.push(this.tags[i].value);
 
                         }else{
 
                            newTags.push(this.tags[i]);
-                        }   
-                       
+                        }
+
                     }
-                   
+
                     this.productModel.tags = JSON.stringify(newTags).toLowerCase();
 
                     /*=============================================
@@ -1987,38 +1987,38 @@ export class AccountMyStoreComponent implements OnInit, OnDestroy {
                     Consolidar Oferta
                     =============================================*/
 
-                    if(this.offer.length > 0){
+                    if (this.offer.length > 0){
 
                         this.productModel.offer = JSON.stringify(this.offer);
 
                     }else{
 
-                        this.productModel.offer = "[]";
-                    } 
+                        this.productModel.offer = '[]';
+                    }
 
                     /*=============================================
                     Subir galería al servidor
                     =============================================*/
                     let countGallery = 0;
-                    let newGallery = [];
+                    const newGallery = [];
 
                     /*=============================================
                     Preguntamos si estamos subiendo nuevas imágenes a la galería
                     =============================================*/
 
-                    if(this.gallery.length > 0){
+                    if (this.gallery.length > 0){
 
                         /*=============================================
                         Actualizar galería
                         =============================================*/
 
-                        if(this.editProductAction){
+                        if (this.editProductAction){
 
                             /*=============================================
                             Borrar Imagen de galería del servidor
                             =============================================*/
 
-                            for(const i in this.deleteGallery){
+                            for (const i in this.deleteGallery){
 
                                 /*=============================================
                                 Borrar antigua imagen del servidor
@@ -2026,12 +2026,12 @@ export class AccountMyStoreComponent implements OnInit, OnDestroy {
 
                                 const formData = new FormData();
 
-                                let fileDelete = `products/${folder}/gallery/${this.deleteGallery[i]}`;
+                                const fileDelete = `products/${folder}/gallery/${this.deleteGallery[i]}`;
 
-                                formData.append("fileDelete", fileDelete);
+                                formData.append('fileDelete', fileDelete);
 
                                 this.http.post(this.serverDelete, formData)
-                                .subscribe(resp=>{})
+                                .subscribe(resp => {});
 
                             }
 
@@ -2039,7 +2039,7 @@ export class AccountMyStoreComponent implements OnInit, OnDestroy {
                             Agregar imagenes nuevas al array de la galería
                             =============================================*/
 
-                            for(const i in this.editGallery){
+                            for (const i in this.editGallery){
 
                                 newGallery.push(this.editGallery[i]);
                             }
@@ -2050,7 +2050,7 @@ export class AccountMyStoreComponent implements OnInit, OnDestroy {
                         Subimos imágenes nuevas de la galería al servidor
                         =============================================*/
 
-                        for(const i in this.gallery){                           
+                        for (const i in this.gallery){
 
                             const formData = new FormData();
 
@@ -2061,21 +2061,21 @@ export class AccountMyStoreComponent implements OnInit, OnDestroy {
                             formData.append('height', '1000');
 
                             this.http.post(this.server, formData)
-                            .subscribe(resp=>{
+                            .subscribe(resp => {
 
-                                if(resp["status"] != null && resp["status"] == 200){  
+                                if (resp['status'] != null && resp['status'] == 200){
 
-                                    newGallery.push(resp["result"]);
+                                    newGallery.push(resp['result']);
 
                                 }
-                    
+
                                 countGallery++;
 
                                 /*=============================================
                                 Preguntamos cuando termina de subir toda la galería
                                 =============================================*/
-                                    
-                                if(countGallery == this.gallery.length){
+
+                                if (countGallery == this.gallery.length){
 
                                     /*=============================================
                                     Consolidar los nombres de archivo de la galería
@@ -2083,26 +2083,26 @@ export class AccountMyStoreComponent implements OnInit, OnDestroy {
 
                                     this.productModel.gallery = JSON.stringify(newGallery);
 
-                                    if(!this.editProductAction){
+                                    if (!this.editProductAction){
 
                                         /*=============================================
                                         Crear el producto en la BD
                                         =============================================*/
 
-                                        this.productsService.registerDatabase(this.productModel, localStorage.getItem("idToken"))   
-                                        .subscribe(resp=>{
+                                        this.productsService.registerDatabase(this.productModel, localStorage.getItem('idToken'))
+                                        .subscribe(resp => {
 
-                                            if(resp["name"] != ""){                                                 
+                                            if (resp['name'] != ''){
 
-                                                Sweetalert.fnc("success", "The product has been successfully created", "account/my-store");  
+                                                Sweetalert.fnc('success', 'The product has been successfully created', 'account/my-store');
 
-                                            }                                                                                                         
+                                            }
 
-                                        }, err =>{
+                                        }, err => {
 
-                                            Sweetalert.fnc("error", err.error.error.message, null)
+                                            Sweetalert.fnc('error', err.error.error.message, null);
 
-                                        })
+                                        });
 
                                     }else{
 
@@ -2110,17 +2110,17 @@ export class AccountMyStoreComponent implements OnInit, OnDestroy {
                                         Editar el producto en la BD
                                         =============================================*/
 
-                                        this.productsService.patchDataAuth(this.idProduct, this.productModel, localStorage.getItem("idToken"))
-                                        .subscribe(resp=>{                                                                            
+                                        this.productsService.patchDataAuth(this.idProduct, this.productModel, localStorage.getItem('idToken'))
+                                        .subscribe(resp => {
 
-                                            Sweetalert.fnc("success", "The product has been successfully updated", "account/my-store");  
-                                                                                                               
+                                            Sweetalert.fnc('success', 'The product has been successfully updated', 'account/my-store');
 
-                                        }, err =>{
 
-                                            Sweetalert.fnc("error", err.error.error.message, null)
+                                        }, err => {
 
-                                        })
+                                            Sweetalert.fnc('error', err.error.error.message, null);
+
+                                        });
 
 
                                     }
@@ -2129,7 +2129,7 @@ export class AccountMyStoreComponent implements OnInit, OnDestroy {
                                 }
 
 
-                            })
+                            });
 
                         }
 
@@ -2139,29 +2139,29 @@ export class AccountMyStoreComponent implements OnInit, OnDestroy {
                         Consolidar los nombres de archivo de la galería
                         =============================================*/
 
-                        this.productModel.gallery = JSON.stringify(this.editGallery); 
+                        this.productModel.gallery = JSON.stringify(this.editGallery);
 
                         /*=============================================
                         Editar el producto en la BD
                         =============================================*/
 
-                        this.productsService.patchDataAuth(this.idProduct, this.productModel, localStorage.getItem("idToken"))
-                        .subscribe(resp=>{                                                                            
+                        this.productsService.patchDataAuth(this.idProduct, this.productModel, localStorage.getItem('idToken'))
+                        .subscribe(resp => {
 
-                            Sweetalert.fnc("success", "The product has been successfully updated", "account/my-store");  
-                                                                                               
+                            Sweetalert.fnc('success', 'The product has been successfully updated', 'account/my-store');
 
-                        }, err =>{
 
-                            Sweetalert.fnc("error", err.error.error.message, null)
+                        }, err => {
 
-                        })
+                            Sweetalert.fnc('error', err.error.error.message, null);
+
+                        });
 
                     }
 
                 }
 
-            })
+            });
 
         }
 
@@ -2170,87 +2170,87 @@ export class AccountMyStoreComponent implements OnInit, OnDestroy {
     /*=============================================
     Eliminar el producto
     =============================================*/
-    
+
     deleteProduct(idProduct, products, i){
 
         /*=============================================
         Preguntamos si hay más de un producto para borrar
         =============================================*/
 
-        if(products.length > 1){
+        if (products.length > 1){
 
-            let allImages = [];
+            const allImages = [];
             let countDelete = 0;
 
             /*=============================================
             Borramos todos los archivos del servidor relacionados con el producto
             =============================================*/
 
-            this.products.forEach((product, index)=>{
+            this.products.forEach((product, index) => {
 
-                if(i == index){
+                if (i == index){
 
                     allImages.push(
 
                         `products/${product.category}/${product.image}`,
                         `products/${product.category}/default/${product.default_banner}`,
-                        `products/${product.category}/top/${product.top_banner["IMG tag"]}`,
-                        `products/${product.category}/horizontal/${product.horizontal_slider["IMG tag"]}`,
+                        `products/${product.category}/top/${product.top_banner['IMG tag']}`,
+                        `products/${product.category}/horizontal/${product.horizontal_slider['IMG tag']}`,
                         `products/${product.category}/vertical/${product.vertical_slider}`
 
-                    )
+                    );
 
-                    for(const i in product.gallery){
+                    for (const i in product.gallery){
 
                         allImages.push( `products/${product.category}/gallery/${product.gallery[i]}`);
 
                     }
 
-                    for(const i in allImages){
+                    for (const i in allImages){
 
                         /*=============================================
                         Borrar todas las imagenes del servidor
                         =============================================*/
 
                         const formData = new FormData();
-                     
-                        formData.append("fileDelete", allImages[i]);
+
+                        formData.append('fileDelete', allImages[i]);
 
                         this.http.post(this.serverDelete, formData)
-                        .subscribe(resp=>{
+                        .subscribe(resp => {
 
-                            if(resp["status"] == 200){
+                            if (resp['status'] == 200){
 
                                 countDelete++;
 
-                                if(countDelete == allImages.length){
+                                if (countDelete == allImages.length){
 
-                                    this.productsService.deleteDataAuth(idProduct, localStorage.getItem("idToken"))
-                                    .subscribe(resp=>{
+                                    this.productsService.deleteDataAuth(idProduct, localStorage.getItem('idToken'))
+                                    .subscribe(resp => {
 
-                                         Sweetalert.fnc("success", "The product was removed", "account/my-store");                                                         
-                                    }, err =>{
+                                         Sweetalert.fnc('success', 'The product was removed', 'account/my-store');
+                                    }, err => {
 
-                                        Sweetalert.fnc("error", err.error.error.message, null)
+                                        Sweetalert.fnc('error', err.error.error.message, null);
 
-                                    })    
+                                    })
 
                                 }
 
                             }
 
-                        })
+                        });
 
                     }
 
                 }
 
-            }) 
+            })
 
 
         }else{
 
-            Sweetalert.fnc("error", "You cannot delete the only product", null)
+            Sweetalert.fnc('error', 'You cannot delete the only product', null);
 
         }
 
@@ -2261,7 +2261,7 @@ export class AccountMyStoreComponent implements OnInit, OnDestroy {
 	Destruímos el trigger de angular
 	=============================================*/
 
-	ngOnDestroy():void{
+	ngOnDestroy(): void{
 
 		this.dtTrigger.unsubscribe();
 	}

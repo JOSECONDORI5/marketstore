@@ -1,31 +1,52 @@
+import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
-import {HttpClient} from "@angular/common/http";
-import { Path, Email } from '../../../config';
-import { Rating,
-  		 DinamicRating, 
-	     DinamicReviews, 
-	     DinamicPrice,
-	     CountDown,
-	     ProgressBar,
-	     Tabs,
-       SlickConfig,
-       ProductLightbox,
-       Quantity,
-       Tooltip,
-       Sweetalert,
-       Share } from '../../../functions';
-
 import { ActivatedRoute, Router } from '@angular/router';
+import { Email, Path } from '../../../config';
+import {
+  CountDown, DinamicPrice, DinamicRating,
+  DinamicReviews,
 
+
+
+
+
+  ProductLightbox, ProgressBar,
+
+
+
+  Quantity, Rating,
+
+
+
+
+
+
+
+
+
+
+
+  Share, SlickConfig,
+
+
+
+  Sweetalert, Tabs,
+
+
+
+  Tooltip
+} from '../../../functions';
 import { MessagesModel } from '../../../models/messages.model';
-
-import { ProductsService } from '../../../services/products.service';
-import { UsersService } from '../../../services/users.service';
 import { MessagesService } from '../../../services/messages.service';
+import { ProductsService } from '../../../services/products.service';
 import { StoresService } from '../../../services/stores.service';
+import { UsersService } from '../../../services/users.service';
 
-declare var jQuery:any;
-declare var $:any;
+
+
+
+declare var jQuery: any;
+declare var $: any;
 
 @Component({
   selector: 'app-product-left',
@@ -34,39 +55,39 @@ declare var $:any;
 })
 export class ProductLeftComponent implements OnInit {
 
-  	path:string = Path.url;	
-  	product:any[]= [];
-  	rating:any[] = [];
-	 reviews:any[] = [];
-	 price:any[] = [];
-	preload:boolean = false;
-	render:boolean = true;
-	countd:any[] = [];
-    gallery:any[] = [];
-    renderGallery:boolean = true;
-    video:string = null;
-    tags:any[]=[];
-    totalReviews:string;
-    offer:boolean = false;
-    quantity:number = 1;
-    summary:any[]=[];
-    details:any[]=[];
+  	path: string = Path.url;
+  	product: any[] = [];
+  	rating: any[] = [];
+	 reviews: any[] = [];
+	 price: any[] = [];
+	preload = false;
+	render = true;
+	countd: any[] = [];
+    gallery: any[] = [];
+    renderGallery = true;
+    video: string = null;
+    tags: any[] = [];
+    totalReviews: string;
+    offer = false;
+    quantity = 1;
+    summary: any[] = [];
+    details: any[] = [];
 
     messages: MessagesModel;
 
-    email:string = Email.url;
+    email: string = Email.url;
 
-    questions:any[] = [];
+    questions: any[] = [];
 
-    linkedin:string;
+    linkedin: string;
 
 
   	constructor(private activateRoute: ActivatedRoute,
-  		        private productsService: ProductsService,
-                  private usersService: UsersService,
-                  private messagesService: MessagesService,
-                  private storesService: StoresService,
-              private router: Router,
+  		           private productsService: ProductsService,
+               private usersService: UsersService,
+               private messagesService: MessagesService,
+               private storesService: StoresService,
+               private router: Router,
                private http: HttpClient) {
 
           this.messages = new MessagesModel();
@@ -76,71 +97,71 @@ export class ProductLeftComponent implements OnInit {
   	ngOnInit(): void {
 
   		this.preload = true;
-        this.linkedin = window.location.href;
-  	
-  		this.productsService.getFilterData("url", this.activateRoute.snapshot.params["param"])  
-  		.subscribe( resp => {
-  			
-  			this.productsFnc(resp);		
+    this.linkedin = window.location.href;
 
-  		})
+  		this.productsService.getFilterData('url', this.activateRoute.snapshot.params['param'])
+  		.subscribe( resp => {
+
+  			this.productsFnc(resp);
+
+  		});
 
         /*=============================================
         Traer preguntas y respuestas del producto
         =============================================*/
-        this.messagesService.getFilterData("url_product",this.activateRoute.snapshot.params["param"])
+    this.messagesService.getFilterData('url_product', this.activateRoute.snapshot.params['param'])
         .subscribe( resp => {
 
-            if(Object.keys(resp).length > 0){ 
+            if (Object.keys(resp).length > 0){
 
-                let count = 0;    
+                let count = 0;
 
-                for(const i in resp){
+                for (const i in resp){
 
                     count++;
 
-                    this.storesService.getFilterData("store", resp[i].receiver)
-                    .subscribe(resp1=>{
+                    this.storesService.getFilterData('store', resp[i].receiver)
+                    .subscribe(resp1 => {
 
-                        for(const f in resp1){
+                        for (const f in resp1){
 
                             resp[i].store = resp1[f];
                         }
 
 
-                    })
+                    });
 
-                    this.usersService.getFilterData("username", resp[i].transmitter)
-                    .subscribe(resp1=>{
+                    this.usersService.getFilterData('username', resp[i].transmitter)
+                    .subscribe(resp1 => {
 
-                        for(const f in resp1){
+                        for (const f in resp1){
 
                             resp[i].user = resp1[f];
                         }
 
 
-                    })
+                    });
 
-                    let localQuestions = this.questions;
+                    const localQuestions = this.questions;
 
                     setTimeout(function(){
 
                         localQuestions.push(resp[i]);
 
-                    },count*1000)
+                    }, count * 1000);
 
                 }
 
             }
 
-        })
+        });
 
 
   	}
 
   /*=============================================
 	Declaramos función para mostrar los productos recomendados
-	=============================================*/	
+	=============================================*/
 
   	productsFnc(response){
 
@@ -148,67 +169,67 @@ export class ProductLeftComponent implements OnInit {
 
 		/*=============================================
 		Hacemos un recorrido por la respuesta que nos traiga el filtrado
-		=============================================*/	
+		=============================================*/
 
   		let i;
-  		let getProduct = [];
+  		const getProduct = [];
 
-  		for(i in response){
+  		for (i in response){
 
-			getProduct.push(response[i]);						
-				
+			getProduct.push(response[i]);
+
 		}
 
 		/*=============================================
 		Filtramos el producto
 		=============================================*/
 
-		getProduct.forEach((product, index)=>{
+		  getProduct.forEach((product, index) => {
 
 			this.product.push(product);
-			
+
 			this.rating.push(DinamicRating.fnc(this.product[index]));
-			
+
 			this.reviews.push(DinamicReviews.fnc(this.rating[index]));
 
 			this.price.push(DinamicPrice.fnc(this.product[index]));
 
-      this.summary.push(JSON.parse(this.product[index].summary));
+   this.summary.push(JSON.parse(this.product[index].summary));
 
-      this.details.push(JSON.parse(this.product[index].details));
+   this.details.push(JSON.parse(this.product[index].details));
 
 			/*=============================================
     	Agregamos la fecha al descontador
-    	=============================================*/ 
-    	
-    	if(this.product[index].offer != ""){
+    	=============================================*/
 
-        let today = new Date();
+   if (this.product[index].offer != ''){
 
-        let offerDate = new Date(
+        const today = new Date();
 
-          parseInt(JSON.parse(this.product[index].offer)[2].split("-")[0]),
-          parseInt(JSON.parse(this.product[index].offer)[2].split("-")[1])-1,
-          parseInt(JSON.parse(this.product[index].offer)[2].split("-")[2])
+        const offerDate = new Date(
 
-        )
+          parseInt(JSON.parse(this.product[index].offer)[2].split('-')[0]),
+          parseInt(JSON.parse(this.product[index].offer)[2].split('-')[1]) - 1,
+          parseInt(JSON.parse(this.product[index].offer)[2].split('-')[2])
 
-        if(today < offerDate){
+        );
+
+        if (today < offerDate){
 
           this.offer = true;
 
-      		const date = JSON.parse(this.product[index].offer)[2]; 
-           
+      		  const date = JSON.parse(this.product[index].offer)[2];
+
           this.countd.push(
 
           	new Date(
-          		parseInt(date.split("-")[0]),
-          		parseInt(date.split("-")[1])-1,
-          		parseInt(date.split("-")[2])
+          		parseInt(date.split('-')[0]),
+          		parseInt(date.split('-')[1]) - 1,
+          		parseInt(date.split('-')[2])
 
         	  )
 
-          )
+          );
 
         }
 
@@ -218,13 +239,13 @@ export class ProductLeftComponent implements OnInit {
       Gallery
       =============================================*/
 
-      this.gallery.push(JSON.parse(this.product[index].gallery)) 
+   this.gallery.push(JSON.parse(this.product[index].gallery))
 
       /*=============================================
       Video
       =============================================*/
 
-      if(JSON.parse(this.product[index].video).length > 0){
+      /* if(JSON.parse(this.product[index].video).length > 0){
 
         if(JSON.parse(this.product[index].video)[0] == "youtube"){
 
@@ -235,36 +256,36 @@ export class ProductLeftComponent implements OnInit {
         if(JSON.parse(this.product[index].video)[0] == "vimeo"){
 
           this.video = `https://player.vimeo.com/video/${JSON.parse(this.product[index].video)[1]}`
-          
+
         }
 
-      }
+      } */
 
      /*=============================================
       Agregamos los tags
-      =============================================*/ 
+      =============================================*/
 
-      this.tags = JSON.parse(this.product[index].tags);
+   this.tags = JSON.parse(this.product[index].tags);
 
       /*=============================================
       Total Reviews
       =============================================*/
-      this.totalReviews = JSON.parse(this.product[index].reviews).length;
+   this.totalReviews = JSON.parse(this.product[index].reviews).length;
 
 
 			this.preload = false;
-	
-		})
+
+		});
 
 	}
 
     /*=============================================
     Función Callback()
-    =============================================*/ 
+    =============================================*/
 
 	callback(){
 
-		if(this.render){
+		if (this.render){
 
 			this.render = false;
 
@@ -272,56 +293,56 @@ export class ProductLeftComponent implements OnInit {
 			CountDown.fnc();
 			ProgressBar.fnc();
 			Tabs.fnc();
-      Quantity.fnc();
-      Tooltip.fnc();
-      Share.fnc();
+   Quantity.fnc();
+   Tooltip.fnc();
+   Share.fnc();
 
       /*=============================================
       Agregamos detalles del producto
-      =============================================*/ 
+      =============================================*/
 
-      if($(".ps-product__variations").attr("specification") != "" && 
-        $(".ps-product__variations").attr("specification") != '[{\"\":[]}]'){
+   if ($('.ps-product__variations').attr('specification') != '' &&
+        $('.ps-product__variations').attr('specification') != '[{\"\":[]}]'){
 
           /*=============================================
           Recorremos el array de objetos de detalles
-          =============================================*/ 
+          =============================================*/
 
-          JSON.parse($(".ps-product__variations").attr("specification")).forEach((detail, index)=>{
+          JSON.parse($('.ps-product__variations').attr('specification')).forEach((detail, index) => {
 
               /*=============================================
               Seleccionamos el nombre de propiedad de cada detalle
-              =============================================*/ 
-          
-              let property = Object.keys(detail).toString(); 
+              =============================================*/
+
+              const property = Object.keys(detail).toString();
 
               /*=============================================
               Construimos el HTML que va a aparecer en la vista
-              =============================================*/ 
-         
-              let figure = `<figure class="details${index}">
-              
+              =============================================*/
+
+              const figure = `<figure class="details${index}">
+
                               <figcaption>${property}: <strong>Choose an option</strong></figcaption>
 
                               <div class="d-flex">
-                              
+
                               </div>
 
-                          </figure>`
+                          </figure>`;
 
               /*=============================================
               Pintamos en la vista el HTML de figure
-              =============================================*/ 
+              =============================================*/
 
-              $(".ps-product__variations").append(`
-                  
+              $('.ps-product__variations').append(`
+
                   ${figure}
 
-              `)
+              `);
 
-              for(const i in detail[property]){
+              for (const i in detail[property]){
 
-                  if(property == "Color"){
+                  if (property == 'Color'){
 
                       $(`.details${index} .d-flex`).append(`
 
@@ -332,7 +353,7 @@ export class ProductLeftComponent implements OnInit {
                               data-toggle="tooltip" title="${detail[property][i]}"
                               style="background-color:${detail[property][i]}; width:30px; height:30px; cursor:pointer; border:1px solid #bbb"></div>
 
-                      `)
+                      `);
 
                   }else{
 
@@ -344,100 +365,100 @@ export class ProductLeftComponent implements OnInit {
                               detailValue="${detail[property][i]}"
                               data-toggle="tooltip" title="${detail[property][i]}"
                               style="cursor:pointer; border:1px solid #bbb">${detail[property][i]}</div>
-                      `)
+                      `);
 
 
                   }
 
                 }
 
-           })
+           });
 
         }
 
         /*=============================================
         Agregamos detalles del producto al localstorage
-        =============================================*/ 
+        =============================================*/
 
-        $(document).on("click", ".details", function(){
+   $(document).on('click', '.details', function(){
 
             /*=============================================
             Señalar el detalle escogido
-            =============================================*/ 
+            =============================================*/
 
-            let details = $(`.details.${$(this).attr("detailType")}`);
+            const details = $(`.details.${$(this).attr('detailType')}`);
 
-            for(let i = 0; i < details.length; i++){
+            for (let i = 0; i < details.length; i++){
 
-                $(details[i]).css({"border":"1px solid #bbb"})
+                $(details[i]).css({'border':'1px solid #bbb'});
 
             }
 
-            $(this).css({"border":"3px solid #bbb"})
+            $(this).css({'border':'3px solid #bbb'});
 
             /*=============================================
             Preguntar si existen detalles en el LocalStorage
-            =============================================*/ 
+            =============================================*/
 
-            if(localStorage.getItem("details")){
+            if (localStorage.getItem('details')){
 
-                let details = JSON.parse(localStorage.getItem("details"));
+                const details = JSON.parse(localStorage.getItem('details'));
 
-                for(const i in details){
+                for (const i in details){
 
-                    details[i][$(this).attr("detailType")] = $(this).attr("detailValue");
+                    details[i][$(this).attr('detailType')] = $(this).attr('detailValue');
 
-                    localStorage.setItem("details", JSON.stringify(details))
+                    localStorage.setItem('details', JSON.stringify(details));
                 }
 
             }else{
 
-                localStorage.setItem("details", `[{"${$(this).attr("detailType")}":"${$(this).attr("detailValue")}"}]`)
+                localStorage.setItem('details', `[{"${$(this).attr('detailType')}":"${$(this).attr('detailValue')}"}]`);
 
             }
 
-        })
+        });
 
 		  }
-	
+
     }
 
     /*=============================================
     Función Callback Galería
-    =============================================*/ 
+    =============================================*/
 
     callbackGallery(i){
 
-        if(this.renderGallery){
+        if (this.renderGallery){
 
             this.renderGallery = false;
 
-            $(".ps-product__thumbnail").hide();
+            $('.ps-product__thumbnail').hide();
 
             setTimeout(function(){
 
-              $(".ps-product__thumbnail").show();
+              $('.ps-product__thumbnail').show();
 
-              SlickConfig.fnc()
-              ProductLightbox.fnc()
+              SlickConfig.fnc();
+              ProductLightbox.fnc();
 
-            },i*500)
+            }, i * 500);
 
         }
 
     }
 
     /*=============================================
-    Función para agregar productos a la lista de deseos 
+    Función para agregar productos a la lista de deseos
     =============================================*/
 
-    addWishlist(product){     
+    addWishlist(product){
         this.usersService.addWishlist(product);
     }
 
     /*=============================================
     Función cambio de cantidad
-    =============================================*/ 
+    =============================================*/
 
     changeQuantity(quantity, unit, move){
 
@@ -445,32 +466,32 @@ export class ProductLeftComponent implements OnInit {
 
         /*=============================================
         Controlar máximos y mínimos de la cantidad
-        =============================================*/ 
+        =============================================*/
 
-        if(Number(quantity) > 9){
+        if (Number(quantity) > 9){
 
             quantity = 9;
 
         }
 
-        if(Number(quantity) < 1){
+        if (Number(quantity) < 1){
 
             quantity = 1;
         }
 
         /*=============================================
         Modificar cantidad de acuerdo a la dirección
-        =============================================*/ 
+        =============================================*/
 
-        if(move == "up" && Number(quantity) < 9){
+        if (move == 'up' && Number(quantity) < 9){
 
-            number = Number(quantity)+unit;
+            number = Number(quantity) + unit;
 
         }
 
-        else if(move == "down" && Number(quantity) > 1){
+        else if (move == 'down' && Number(quantity) > 1){
 
-             number = Number(quantity)-unit;
+             number = Number(quantity) - unit;
 
         }else{
 
@@ -478,7 +499,7 @@ export class ProductLeftComponent implements OnInit {
 
         }
 
-        $(".quantity input").val(quantity);
+        $('.quantity input').val(quantity);
 
         this.quantity = number;
 
@@ -495,9 +516,9 @@ export class ProductLeftComponent implements OnInit {
         Preguntamos si existe detalles en localStorage
         =============================================*/
 
-        if(localStorage.getItem("details")){
+        if (localStorage.getItem('details')){
 
-            details = localStorage.getItem("details");
+            details = localStorage.getItem('details');
 
         }
 
@@ -505,17 +526,17 @@ export class ProductLeftComponent implements OnInit {
         Agregar producto al carrito de compras
         =============================================*/
 
-        let url = this.router.url;
+        const url = this.router.url;
 
-        let item = {
+        const item = {
 
-          product: product,
+          product,
           unit: this.quantity,
-          details: details,
-          url:url
-        }
+          details,
+          url
+        };
 
-        localStorage.removeItem("details");
+        localStorage.removeItem('details');
 
         this.usersService.addSoppingCart(item);
 
@@ -531,9 +552,9 @@ export class ProductLeftComponent implements OnInit {
         Preguntamos si existe detalles en localStorage
         =============================================*/
 
-        if(localStorage.getItem("details")){
+        if (localStorage.getItem('details')){
 
-            details = localStorage.getItem("details");
+            details = localStorage.getItem('details');
 
         }
 
@@ -541,15 +562,15 @@ export class ProductLeftComponent implements OnInit {
         Agregar producto al carrito de compras
         =============================================*/
 
-        let item = {
+        const item = {
 
-          product: product,
+          product,
           unit: this.quantity,
-          details: details,
-          url:'checkout'
-        }
+          details,
+          url: 'checkout'
+        };
 
-        localStorage.removeItem("details");
+        localStorage.removeItem('details');
 
         this.usersService.addSoppingCart(item);
 
@@ -570,11 +591,11 @@ export class ProductLeftComponent implements OnInit {
         Validar si este usuario está autenticado
         =============================================*/
 
-        this.usersService.authActivate().then(resp=>{
+        this.usersService.authActivate().then(resp => {
 
-            if(!resp){
+            if (!resp){
 
-                Sweetalert.fnc("error", "Please login to send your question", null);
+                Sweetalert.fnc('error', 'Please login to send your question', null);
 
                 return;
 
@@ -586,35 +607,35 @@ export class ProductLeftComponent implements OnInit {
 
                 let emailStore = null;
 
-                this.storesService.getFilterData("store", store)
-                .subscribe(resp =>{
+                this.storesService.getFilterData('store', store)
+                .subscribe(resp => {
 
-                    for(const i in resp){
+                    for (const i in resp){
 
                         emailStore = resp[i].email;
                     }
 
-                })
+                });
 
                 /*=============================================
                 Traer la información del usuario
                 =============================================*/
 
-                this.usersService.getFilterData("idToken", localStorage.getItem("idToken"))
-                .subscribe(resp=>{
+                this.usersService.getFilterData('idToken', localStorage.getItem('idToken'))
+                .subscribe(resp => {
 
-                    for(const i in resp){
+                    for (const i in resp){
 
-                        this.messages.transmitter = resp[i].username; 
+                        this.messages.transmitter = resp[i].username;
 
                         /*=============================================
                         Crear el mensaje en la base de datos
                         =============================================*/
 
-                        this.messagesService.registerDatabase(this.messages, localStorage.getItem("idToken"))
-                        .subscribe(resp=>{
+                        this.messagesService.registerDatabase(this.messages, localStorage.getItem('idToken'))
+                        .subscribe(resp => {
 
-                            if(resp["name"] != ""){
+                            if (resp['name'] != ''){
 
                                 /*=============================================
                                 Enviar notificación por correo electrónico
@@ -629,31 +650,31 @@ export class ProductLeftComponent implements OnInit {
                                 formData.append('name', store);
 
                                 this.http.post(this.email, formData)
-                                .subscribe(resp =>{
+                                .subscribe(resp => {
 
-                                    if(resp["status"] == 200){
+                                    if (resp['status'] == 200){
 
-                                        Sweetalert.fnc("success", "The message has been sent", "product/"+url);
+                                        Sweetalert.fnc('success', 'The message has been sent', 'product/'+ url);
 
                                     }
 
-                                }) 
+                                })
 
                             }
 
-                        }, err =>{
+                        }, err => {
 
-                            Sweetalert.fnc("error", err.error.error.message, null)
+                            Sweetalert.fnc('error', err.error.error.message, null);
 
-                        })
+                        });
                     }
 
-                })
+                });
 
             }
 
-        })
-        
+        });
+
     }
 
 }
